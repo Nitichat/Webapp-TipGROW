@@ -1,0 +1,59 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "FertilizerCalculation": {
+      "title": "FertilizerCalculation",
+      "description": "Saved plot fertilizer calculation record",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "plotName": { "type": "string", "maxLength": 100 },
+        "cropId": { "type": "string", "maxLength": 50 },
+        "cropName": { "type": "string", "maxLength": 100 },
+        "growthStage": { "type": "string", "maxLength": 100 },
+        "areaRai": { "type": "number" },
+        "areaNgan": { "type": "number" },
+        "areaWah": { "type": "number" },
+        "treeCount": { "type": "number" },
+        "soilTexture": { "type": "string", "maxLength": 50 },
+        "soilPh": { "type": "number" },
+        "soilN": { "type": "number" },
+        "soilP": { "type": "number" },
+        "soilK": { "type": "number" },
+        "commercialFormula": { "type": "string", "maxLength": 100 },
+        "commercialBags": { "type": "number" },
+        "commercialRatePerTree": { "type": "string", "maxLength": 100 },
+        "customUreaKg": { "type": "number" },
+        "customDapKg": { "type": "number" },
+        "customPotashKg": { "type": "number" },
+        "totalCustomKg": { "type": "number" },
+        "estimatedCost": { "type": "number" },
+        "savingsPercent": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "cropId", "cropName", "areaRai"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document storing basic account info"
+    },
+    "/fertilizerCalculations/{calcId}": {
+      "schema": "FertilizerCalculation",
+      "description": "Saved fertilizer calculation for user plots"
+    }
+  }
+}

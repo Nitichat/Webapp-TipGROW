@@ -1,0 +1,6 @@
+{
+  "name": "TipGROW - ระบบคำนวณสูตรปุ๋ยเฉพาะแปลงพืชเศรษฐกิจ",
+  "description": "ระบบวิเคราะห์ธาตุอาหาร N-P-K และคำนวณสูตรปุ๋ยแม่นยำรายแปลงสำหรับ ทุเรียน ยางพารา มะพร้าว ลองกอง มังคุด เงาะ กล้วย สับปะรด",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

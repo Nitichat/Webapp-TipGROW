@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" fill="none">
+  <defs>
+    <!-- Radial Body Gradient: Warm golden peach -->
+    <radialGradient id="seedGrad" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stopColor="#FFF2D6" />
+      <stop offset="35%" stopColor="#FBD7A4" />
+      <stop offset="85%" stopColor="#F5BF84" />
+      <stop offset="100%" stopColor="#EAA869" />
+    </radialGradient>
+
+    <!-- Leaf Gradients: Fresh Lime -->
+    <linearGradient id="leafGradL" x1="0%" y1="100%" x2="40%" y2="0%">
+      <stop offset="0%" stopColor="#9BCB4A" />
+      <stop offset="100%" stopColor="#C9EA74" />
+    </linearGradient>
+    <linearGradient id="leafGradR" x1="0%" y1="100%" x2="40%" y2="0%">
+      <stop offset="0%" stopColor="#9BCB4A" />
+      <stop offset="100%" stopColor="#C9EA74" />
+    </linearGradient>
+
+    <!-- Text Drop Shadow Filter -->
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="2" dy="3.5" stdDeviation="2" flood-color="#2D1707" flood-opacity="0.32" />
+    </filter>
+  </defs>
+
+  <!-- ======================================================== -->
+  <!-- 1. FEET: Two small stubby U-shaped feet (behind body)    -->
+  <!-- ======================================================== -->
+  <!-- Left foot -->
+  <path d="M 216 322 C 216 345, 230 348, 240 344 C 244 338, 244 322, 244 322 Z" 
+        fill="#ECA96B" stroke="#44210D" stroke-width="6" stroke-linejoin="round" />
+  <!-- Right foot -->
+  <path d="M 264 322 C 264 345, 274 348, 284 344 C 288 338, 288 322, 288 322 Z" 
+        fill="#ECA96B" stroke="#44210D" stroke-width="6" stroke-linejoin="round" />
+
+  <!-- ======================================================== -->
+  <!-- 2. HANDS: Two cute waving rounded arms extending outward -->
+  <!-- ======================================================== -->
+  <!-- Left hand -->
+  <path d="M 185 248 C 163 242, 154 252, 172 268 C 182 276, 192 270, 193 264" 
+        fill="#F6CD98" stroke="#44210D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Right hand -->
+  <path d="M 315 248 C 337 242, 346 252, 328 268 C 318 276, 308 270, 307 264" 
+        fill="#F6CD98" stroke="#44210D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- ======================================================== -->
+  <!-- 3. MAIN EGG/SEED BODY                                    -->
+  <!-- ======================================================== -->
+  <path d="M 250 178 
+           C 285 178, 324 218, 324 262 
+           C 324 308, 290 334, 250 334 
+           C 210 334, 176 308, 176 262 
+           C 176 218, 215 178, 250 178 Z" 
+        fill="url(#seedGrad)" stroke="#44210D" stroke-width="6.5" stroke-linejoin="round" />
+
+  <!-- White crescent shine highlight on upper-left of body -->
+  <ellipse cx="222" cy="204" rx="10" ry="6.5" transform="rotate(-35 222 204)" fill="#FFFFFF" opacity="0.75" />
+
+  <!-- ======================================================== -->
+  <!-- 4. GREEN SPROUT: STEM & TWO SYMMETRICAL LEAVES           -->
+  <!-- ======================================================== -->
+  <!-- Central green stem -->
+  <path d="M 250 180 C 248 155, 253 140, 250 125" stroke="#44210D" stroke-width="6.5" stroke-linecap="round" />
+  <path d="M 250 180 C 248 155, 253 140, 250 125" stroke="#7EAB35" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Left Leaf -->
+  <path d="M 250 136 
+           C 228 128, 185 106, 172 120 
+           C 160 138, 202 174, 242 150 
+           C 248 147, 250 139, 250 136 Z" 
+        fill="url(#leafGradL)" stroke="#44210D" stroke-width="6" stroke-linejoin="round" />
+  <!-- Left Leaf Vein -->
+  <path d="M 246 140 C 222 133, 200 128, 182 122" stroke="#5C8B22" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Right Leaf -->
+  <path d="M 250 136 
+           C 272 128, 315 106, 328 120 
+           C 340 138, 298 174, 258 150 
+           C 252 147, 250 139, 250 136 Z" 
+        fill="url(#leafGradR)" stroke="#44210D" stroke-width="6" stroke-linejoin="round" />
+  <!-- Right Leaf Vein -->
+  <path d="M 254 140 C 278 133, 300 128, 318 122" stroke="#5C8B22" stroke-width="3" stroke-linecap="round" />
+
+  <!-- ======================================================== -->
+  <!-- 5. FACE: Solid dark bead eyes, blush ovals, open smile   -->
+  <!-- ======================================================== -->
+  <!-- Left Eye: Solid circle with NO white pupils -->
+  <circle cx="220" cy="252" r="6" fill="#3D1C08" />
+  <!-- Right Eye: Solid circle with NO white pupils -->
+  <circle cx="280" cy="252" r="6" fill="#3D1C08" />
+
+  <!-- Left Pink Cheek Blush -->
+  <ellipse cx="206" cy="265" rx="10" ry="6" fill="#F99898" opacity="0.9" />
+  <!-- Right Pink Cheek Blush -->
+  <ellipse cx="294" cy="265" rx="10" ry="6" fill="#F99898" opacity="0.9" />
+
+  <!-- Happy Open Smiling Mouth -->
+  <path d="M 238 257 C 238 275, 262 275, 262 257 Z" 
+        fill="#82281E" stroke="#44210D" stroke-width="4.5" stroke-linejoin="round" />
+  <!-- Tongue inside mouth -->
+  <path d="M 244 266 C 250 263, 256 263, 261 269" 
+        fill="#F6A0A0" />
+
+  <!-- ======================================================== -->
+  <!-- 6. TYPOGRAPHY LOGO: "TipGROW"                            -->
+  <!-- ======================================================== -->
+  <g filter="url(#softShadow)" transform="translate(100, 362)">
+    <!-- "Tip" - Warm Camel / Orange-Brown #CE863E -->
+    <!-- T -->
+    <path d="M 6 12 L 38 12 M 22 12 L 22 52" stroke="#CE863E" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- i stem -->
+    <path d="M 52 27 L 52 52" stroke="#CE863E" stroke-width="10" stroke-linecap="round" />
+    <!-- i green leaf dot -->
+    <path d="M 50 18 C 47 10, 59 9, 59 15 C 59 19, 51 19, 50 18 Z" fill="#8BB939" stroke="#44210D" stroke-width="1.8" />
+
+    <!-- p -->
+    <path d="M 70 27 L 70 60 M 70 32 C 78 24, 96 24, 96 39 C 96 52, 78 52, 70 45" 
+          stroke="#CE863E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- "GROW" - Fresh Lime Green #A0CC53 -->
+    <!-- G -->
+    <path d="M 136 30 C 130 24, 118 23, 108 31 C 98 40, 98 52, 112 60 C 122 65, 136 61, 136 48 L 122 48" 
+          stroke="#A0CC53" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- R -->
+    <path d="M 150 27 L 150 59 M 150 32 C 158 24, 174 24, 174 38 C 174 47, 158 47, 150 47 M 162 46 L 174 59" 
+          stroke="#A0CC53" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+
+    <!-- O -->
+    <ellipse cx="200" cy="43" rx="14" ry="16" stroke="#A0CC53" stroke-width="11" fill="none" />
+
+    <!-- W -->
+    <path d="M 226 27 L 233 59 L 243 38 L 253 59 L 260 27" 
+          stroke="#A0CC53" stroke-width="10.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  </g>
+</svg>

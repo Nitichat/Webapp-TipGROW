@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
+    color: #0e1f10;
+    background-color: #f4f9f3;
+  }
+}
+
+.font-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+@media print {
+  header, footer, .no-print, button:not(.print-include) {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .print-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+}
