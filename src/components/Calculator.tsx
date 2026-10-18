@@ -223,8 +223,14 @@ export const Calculator: React.FC<CalculatorProps> = ({
                   <p className="text-xs text-stone-500">เจาะจงความต้องการตามสรีรวิทยาของพืชแต่ละกลุ่ม</p>
                 </div>
               </div>
-              <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200">
-                เลือกแล้ว: {selectedCrop.nameTh} ({selectedCrop.nameEn})
+              <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold border border-emerald-200 flex items-center gap-1.5">
+                <img
+                  src={selectedCrop.avatarUrl}
+                  alt={selectedCrop.nameTh}
+                  className="w-5 h-5 rounded-full object-cover shadow-2xs border border-emerald-300"
+                  referrerPolicy="no-referrer"
+                />
+                <span>เลือกแล้ว: {selectedCrop.nameTh} ({selectedCrop.nameEn})</span>
               </span>
             </div>
 
@@ -639,13 +645,21 @@ export const Calculator: React.FC<CalculatorProps> = ({
               <span className="text-[11px] text-emerald-200/80">อัปเดต: วันนี้</span>
             </div>
 
-            <div>
-              <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
-                {selectedCrop.nameTh} • {calculationResult.stage.name.replace(/^[^\s]+\s*/, '')}
-              </h3>
-              <p className="text-xs text-emerald-100/90 mt-1">
-                พื้นที่ {calculationResult.totalRai.toFixed(1)} ไร่ (ประมาณ {calculationResult.totalTrees.toLocaleString()} ต้น) • แนะนำเสริมฟอสฟอรัส-โพแทสเซียมเข้มข้น
-              </p>
+            <div className="flex items-center gap-3.5">
+              <img
+                src={selectedCrop.avatarUrl}
+                alt={selectedCrop.nameTh}
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover shadow-sm border border-emerald-400/40 shrink-0"
+                referrerPolicy="no-referrer"
+              />
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-white leading-tight">
+                  {selectedCrop.nameTh} • {calculationResult.stage.name.replace(/^[^\s]+\s*/, '')}
+                </h3>
+                <p className="text-xs text-emerald-100/90 mt-1">
+                  พื้นที่ {calculationResult.totalRai.toFixed(1)} ไร่ (ประมาณ {calculationResult.totalTrees.toLocaleString()} ต้น) • แนะนำเสริมฟอสฟอรัส-โพแทสเซียมเข้มข้น
+                </p>
+              </div>
             </div>
 
             {/* Cost & Quantity Highlight Strip */}

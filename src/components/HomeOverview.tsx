@@ -6,12 +6,14 @@ interface HomeOverviewProps {
   onStartCalculation: (cropId?: string) => void;
   onOpenKnowledge: () => void;
   onOpenAuth: () => void;
+  onOpenTeam?: () => void;
 }
 
 export const HomeOverview: React.FC<HomeOverviewProps> = ({
   onStartCalculation,
   onOpenKnowledge,
   onOpenAuth,
+  onOpenTeam,
 }) => {
   return (
     <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6 pt-2 pb-16 space-y-10">
@@ -41,6 +43,15 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
               <span className="material-symbols-outlined text-[20px]">menu_book</span>
               <span>ดูคู่มือวิชาการ 8 พืช</span>
             </button>
+            {onOpenTeam && (
+              <button
+                onClick={onOpenTeam}
+                className="px-5 py-3 rounded-full bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-200 font-bold text-sm border border-emerald-500/30 transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-[20px]">groups</span>
+                <span>คณะผู้จัดทำ (7 คน)</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -55,7 +66,7 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-xl font-bold text-emerald-950">
-              เลือกพืชททที่คุณสนใจ
+              เลือกพืชที่คุณสนใจ
             </h2>
             <p className="text-xs text-stone-500">
               ครอบคลุมอัตราความต้องการธาตุอาหาร N-P-K ตามสรีรวิทยาของแต่ละชนิด
@@ -79,13 +90,19 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-3xl group-hover:scale-110 transition-transform">{crop.emoji}</span>
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden shadow-xs border border-emerald-900/10 group-hover:ring-2 group-hover:ring-emerald-500/50 transition-all">
+                    <img
+                      src={crop.avatarUrl}
+                      alt={crop.nameTh}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
                 </div>
                 <h3 className="text-base font-bold text-stone-900 group-hover:text-emerald-800 transition-colors">
                   {crop.nameTh}
                 </h3>
                 <p className="text-xs text-stone-400">{crop.nameEn} • {crop.category}</p>
-                <p className="text-[11px] text-stone-500 mt-2 line-clamp-1">{crop.variety}</p>
               </div>
 
               <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-emerald-800 font-bold">

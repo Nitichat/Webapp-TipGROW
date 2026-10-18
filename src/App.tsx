@@ -14,12 +14,13 @@ import { KnowledgeHub } from './components/KnowledgeHub.tsx';
 import { HomeOverview } from './components/HomeOverview.tsx';
 import { LoginPage } from './components/LoginPage.tsx';
 import { ReportModal } from './components/ReportModal.tsx';
+import { TeamPage } from './components/TeamPage.tsx';
 import { CalculationResult } from './data/agronomy.ts';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<'home' | 'calculator' | 'history' | 'knowledge'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'calculator' | 'history' | 'knowledge' | 'team'>('home');
   const [reportResult, setReportResult] = useState<CalculationResult | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
@@ -114,6 +115,7 @@ export default function App() {
             onStartCalculation={() => setCurrentTab('calculator')}
             onOpenKnowledge={() => setCurrentTab('knowledge')}
             onOpenAuth={() => {}}
+            onOpenTeam={() => setCurrentTab('team')}
           />
         )}
 
@@ -132,10 +134,21 @@ export default function App() {
             }}
           />
         )}
+
+        {currentTab === 'team' && (
+          <TeamPage
+            onGoHome={() => setCurrentTab('home')}
+            onStartCalculation={() => setCurrentTab('calculator')}
+          />
+        )}
       </main>
 
       {/* Footer */}
-      <Footer onOpenKnowledge={() => setCurrentTab('knowledge')} />
+      <Footer
+        onOpenKnowledge={() => setCurrentTab('knowledge')}
+        onGoHome={() => setCurrentTab('home')}
+        onOpenTeam={() => setCurrentTab('team')}
+      />
 
       {/* Report Modal (Print / PDF Export) */}
       <ReportModal

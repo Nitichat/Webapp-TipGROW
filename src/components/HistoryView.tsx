@@ -10,6 +10,7 @@ import {
   doc 
 } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import { CROP_IMAGES } from './CropIcons.tsx';
 
 interface HistoryRecord {
   id: string;
@@ -194,13 +195,21 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
             <button
               key={cId}
               onClick={() => setCropFilter(cId)}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 cropFilter === cId
-                  ? 'bg-emerald-800 text-white'
+                  ? 'bg-emerald-800 text-white shadow-xs'
                   : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
               }`}
             >
-              {names[cId]} ({count})
+              {CROP_IMAGES[cId] && (
+                <img
+                  src={CROP_IMAGES[cId]}
+                  alt=""
+                  className="w-4 h-4 rounded-full object-cover shrink-0"
+                  referrerPolicy="no-referrer"
+                />
+              )}
+              <span>{names[cId]} ({count})</span>
             </button>
           );
         })}
@@ -233,14 +242,22 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
               className="bg-white rounded-3xl p-5 border border-stone-200/90 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold">
-                      {item.cropName}
-                    </span>
-                    <h3 className="text-base font-bold text-emerald-950 mt-1 truncate">
-                      {item.plotName}
-                    </h3>
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={CROP_IMAGES[item.cropId] || CROP_IMAGES.durian}
+                      alt={item.cropName}
+                      className="w-12 h-12 rounded-2xl object-cover shadow-2xs border border-emerald-900/10 shrink-0"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold">
+                        {item.cropName}
+                      </span>
+                      <h3 className="text-base font-bold text-emerald-950 mt-0.5 truncate">
+                        {item.plotName}
+                      </h3>
+                    </div>
                   </div>
                   <button
                     onClick={() => handleDelete(item.id)}

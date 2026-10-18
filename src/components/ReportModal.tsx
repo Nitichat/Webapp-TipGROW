@@ -81,9 +81,18 @@ export const ReportModal: React.FC<ReportModalProps> = ({
 
           {/* Plot Information Section */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-stone-50 p-4 rounded-2xl border border-stone-200 text-xs">
-            <div>
-              <span className="text-stone-400 block font-medium">ชนิดพืช:</span>
-              <span className="font-bold text-stone-900 text-sm">{result.crop.nameTh} ({result.crop.category})</span>
+            <div className="flex items-center gap-2.5">
+              <img
+                src={result.crop.avatarUrl}
+                alt={result.crop.nameTh}
+                className="w-10 h-10 rounded-xl object-cover shadow-2xs border border-emerald-900/10 shrink-0"
+                referrerPolicy="no-referrer"
+              />
+              <div>
+                <span className="text-stone-400 block font-medium text-[11px]">ชนิดพืช:</span>
+                <span className="font-bold text-stone-900 text-sm block">{result.crop.nameTh}</span>
+                <span className="text-[10px] text-stone-400 font-medium">{result.crop.category}</span>
+              </div>
             </div>
             <div>
               <span className="text-stone-400 block font-medium">ระยะการเจริญเติบโต:</span>

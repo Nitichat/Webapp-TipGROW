@@ -39,7 +39,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (มาตรฐานสวนผลไม้)',
     emoji: '🍈',
-    avatarUrl: 'https://images.unsplash.com/photo-1587393855524-087f83d95bc9?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218133979.png',
     stages: [
       {
         id: 'stage1',
@@ -124,7 +124,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 76,
     spacingDesc: 'ระยะปลูก 3x7 ม. (ประมาณ 76 ต้น/ไร่)',
     emoji: '🌳',
-    avatarUrl: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218137108.png',
     stages: [
       {
         id: 'stage1',
@@ -191,7 +191,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 22,
     spacingDesc: 'ระยะปลูก 8.5x8.5 ม. (แกง) หรือ 6x6 ม. (น้ำหอม ~44 ต้น/ไร่)',
     emoji: '🥥',
-    avatarUrl: 'https://images.unsplash.com/photo-1544378730-8b5104b18790?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218138819.png',
     stages: [
       {
         id: 'stage1',
@@ -258,7 +258,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (ประมาณ 25 ต้น/ไร่)',
     emoji: '🟣',
-    avatarUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218141843.png',
     stages: [
       {
         id: 'stage1',
@@ -325,7 +325,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (ประมาณ 25 ต้น/ไร่)',
     emoji: '🔴',
-    avatarUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218144926.png',
     stages: [
       {
         id: 'stage1',
@@ -392,7 +392,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 30,
     spacingDesc: 'ระยะปลูก 7x7 ม. หรือ 6x8 ม. (~30 ต้น/ไร่)',
     emoji: '🟡',
-    avatarUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218146804.png',
     stages: [
       {
         id: 'stage1',
@@ -459,7 +459,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 400,
     spacingDesc: 'ระยะปลูก 2x2 ม. (~400 กอ/ไร่)',
     emoji: '🍌',
-    avatarUrl: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218148833.png',
     stages: [
       {
         id: 'stage1',
@@ -526,7 +526,7 @@ export const CROPS: CropInfo[] = [
     defaultTreesPerRai: 8000,
     spacingDesc: 'ปลูกแถวคู่ 30x50x90 ซม. (~8,000 ต้น/ไร่)',
     emoji: '🍍',
-    avatarUrl: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: '/src/assets/images/regenerated_image_1792218150785.png',
     stages: [
       {
         id: 'stage1',

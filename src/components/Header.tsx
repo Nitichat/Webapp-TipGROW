@@ -3,8 +3,8 @@ import { TipGrowLogo } from './CropIcons.tsx';
 import { User } from 'firebase/auth';
 
 interface HeaderProps {
-  currentTab: 'home' | 'calculator' | 'history' | 'knowledge';
-  onSelectTab: (tab: 'home' | 'calculator' | 'history' | 'knowledge') => void;
+  currentTab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team';
+  onSelectTab: (tab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team') => void;
   currentUser: User | null;
   onOpenAuth: () => void;
   onLogout: () => void;
@@ -23,17 +23,17 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="fixed top-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-b border-emerald-900/10 shadow-xs">
-      <div className="h-20 max-w-[1180px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
-        {/* Brand Logo & Tagline */}
-        <div className="flex items-center gap-6 shrink-0 cursor-pointer" onClick={() => onSelectTab('home')}>
-          <TipGrowLogo />
+      <div className="h-16 sm:h-20 max-w-[1240px] mx-auto px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Brand Logo - clicking logo icon or word TipGROW navigates to home */}
+        <div className="flex items-center shrink-0">
+          <TipGrowLogo onClick={() => onSelectTab('home')} />
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="hidden lg:flex items-center gap-1">
+        {/* Navigation Tabs - All menus on the exact same line as TipGROW */}
+        <nav className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-none py-1">
           <button
             onClick={() => onSelectTab('home')}
-            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               currentTab === 'home'
                 ? 'bg-emerald-800 text-white shadow-xs'
                 : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
@@ -43,17 +43,17 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={() => onSelectTab('calculator')}
-            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               currentTab === 'calculator'
                 ? 'bg-emerald-800 text-white shadow-xs'
                 : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
             }`}
           >
-            คำนวณสูตรปุ๋ย
+            คำนวณปุ๋ย
           </button>
           <button
             onClick={() => onSelectTab('history')}
-            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               currentTab === 'history'
                 ? 'bg-emerald-800 text-white shadow-xs'
                 : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
@@ -63,19 +63,28 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={() => onSelectTab('knowledge')}
-            className={`px-3.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
               currentTab === 'knowledge'
                 ? 'bg-emerald-800 text-white shadow-xs'
                 : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
             }`}
           >
-            คลังความรู้/คู่มือ
+            คู่มือพืช
+          </button>
+          <button
+            onClick={() => onSelectTab('team')}
+            className={`px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+              currentTab === 'team'
+                ? 'bg-emerald-800 text-white shadow-xs'
+                : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
+            }`}
+          >
+            ผู้จัดทำ
           </button>
         </nav>
 
         {/* Profile / Auth Button */}
-        <div className="flex items-center gap-3 justify-end shrink-0">
-          {/* User Profile / Auth Button */}
+        <div className="flex items-center gap-2 sm:gap-3 justify-end shrink-0">
           {currentUser ? (
             <div className="relative">
               <button
@@ -136,46 +145,10 @@ export const Header: React.FC<HeaderProps> = ({
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-900 text-xs font-bold transition-all border border-emerald-300 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[17px]">login</span>
-              <span>เข้าสู่ระบบ</span>
+              <span className="hidden sm:inline">เข้าสู่ระบบ</span>
             </button>
           )}
         </div>
-      </div>
-
-      {/* Mobile navigation bottom bar / strip */}
-      <div className="lg:hidden flex items-center justify-around bg-emerald-50/80 border-t border-emerald-900/10 py-1.5 px-2">
-        <button
-          onClick={() => onSelectTab('home')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold ${
-            currentTab === 'home' ? 'bg-emerald-800 text-white' : 'text-stone-700'
-          }`}
-        >
-          หน้าแรก
-        </button>
-        <button
-          onClick={() => onSelectTab('calculator')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold ${
-            currentTab === 'calculator' ? 'bg-emerald-800 text-white' : 'text-stone-700'
-          }`}
-        >
-          คำนวณสูตรปุ๋ย
-        </button>
-        <button
-          onClick={() => onSelectTab('history')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold ${
-            currentTab === 'history' ? 'bg-emerald-800 text-white' : 'text-stone-700'
-          }`}
-        >
-          ประวัติการคำนวณ
-        </button>
-        <button
-          onClick={() => onSelectTab('knowledge')}
-          className={`px-3 py-1 rounded-lg text-xs font-bold ${
-            currentTab === 'knowledge' ? 'bg-emerald-800 text-white' : 'text-stone-700'
-          }`}
-        >
-          คู่มือพืช
-        </button>
       </div>
     </header>
   );
