@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
+import { safeExportToPng, normalizeImageUrl } from '../utils/imageExport.ts';
 import { CalculationResult } from '../data/agronomy.ts';
 import { TipGrowLogo } from './CropIcons.tsx';
 
@@ -19,8 +20,37 @@ export const ReportModal: React.FC<ReportModalProps> = ({
 }) => {
   if (!isOpen || !result) return null;
 
+  const reportContentRef = useRef<HTMLDivElement>(null);
+  const [isExportingImage, setIsExportingImage] = useState(false);
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadImage = async () => {
+    if (!reportContentRef.current) return;
+    try {
+      setIsExportingImage(true);
+      await new Promise((r) => setTimeout(r, 150));
+      const dataUrl = await safeExportToPng(reportContentRef.current, {
+        backgroundColor: '#ffffff',
+      });
+
+      const cleanCropName = result.crop.nameTh.replace(/[\/\s]/g, '_');
+      const cleanPlotName = (plotName || 'แปลงพืช').replace(/[\/\s]/g, '_');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const filename = `TipGROW_รายงานผลวิเคราะห์_${cleanCropName}_${cleanPlotName}_${dateStr}.png`;
+
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Failed to export report image:', error);
+      alert('เกิดข้อผิดพลาดในการดาวน์โหลดรูปภาพ โปรดลองใหม่อีกครั้ง');
+    } finally {
+      setIsExportingImage(false);
+    }
   };
 
   const todayStr = new Date().toLocaleDateString('th-TH', {
@@ -37,15 +67,26 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         <div className="bg-stone-100 px-6 py-3 border-b border-stone-200 flex items-center justify-between no-print">
           <div className="flex items-center gap-2 text-xs font-bold text-stone-700">
             <span className="material-symbols-outlined text-emerald-800 text-[18px]">description</span>
-            <span>รายงานผลการวิเคราะห์และสูตรปุ๋ยเฉพาะแปลง (PDF Export)</span>
+            <span>รายงานผลการวิเคราะห์และสูตรปุ๋ยเฉพาะแปลง</span>
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={handleDownloadImage}
+              disabled={isExportingImage}
+              className="px-3.5 py-1.5 rounded-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer disabled:opacity-60"
+              title="ดาวน์โหลดทั้งหน้ารายงานนี้เป็นรูปภาพ PNG"
+            >
+              <span className="material-symbols-outlined text-[16px]">
+                {isExportingImage ? 'sync' : 'image'}
+              </span>
+              <span>{isExportingImage ? 'กำลังบันทึก...' : 'ดาวน์โหลดรูปภาพ'}</span>
+            </button>
+            <button
               onClick={handlePrint}
-              className="px-4 py-1.5 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+              className="px-3.5 py-1.5 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
             >
               <span className="material-symbols-outlined text-[16px]">print</span>
-              <span>พิมพ์ / บันทึกเป็น PDF</span>
+              <span>พิมพ์ / บันทึก PDF</span>
             </button>
             <button
               onClick={onClose}
@@ -57,7 +98,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         </div>
 
         {/* Printable Report Body */}
-        <div className="p-8 sm:p-10 space-y-6 text-stone-800 bg-white">
+        <div ref={reportContentRef} className="p-8 sm:p-10 space-y-6 text-stone-800 bg-white">
           
           {/* Official Letterhead */}
           <div className="flex items-start justify-between border-b-2 border-emerald-900 pb-5">
@@ -83,9 +124,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-50 p-4 rounded-2xl border border-stone-200 text-xs">
             <div className="flex items-center gap-2.5 col-span-2 sm:col-span-1">
               <img
-                src={result.crop.avatarUrl}
+                src={normalizeImageUrl(result.crop.avatarUrl)}
                 alt={result.crop.nameTh}
                 className="w-10 h-10 rounded-xl object-cover shadow-2xs border border-emerald-900/10 shrink-0"
+                crossOrigin="anonymous"
                 referrerPolicy="no-referrer"
               />
               <div>

@@ -34,7 +34,7 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
               className="px-6 py-3 rounded-full bg-emerald-300 hover:bg-emerald-200 text-emerald-950 font-bold text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <span className="material-symbols-outlined text-[20px]">calculate</span>
-              <span>เริ่มคำนวณสูตรปุ๋ยทันที</span>
+              <span>เริ่มคำนวณปริมาณปุ๋ยทันที</span>
             </button>
             <button
               onClick={onOpenKnowledge}
@@ -106,7 +106,7 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
               </div>
 
               <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-emerald-800 font-bold">
-                <span>คำนวณสูตร</span>
+                <span>คำนวณปริมาณปุ๋ย</span>
                 <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">
                   arrow_forward
                 </span>

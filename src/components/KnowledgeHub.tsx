@@ -9,52 +9,52 @@ interface KnowledgeHubProps {
 // Order requested by user: 1. ยางพารา 2. มะพร้าว 3. ทุเรียน 4. มังคุด 5. กล้วย 6. เงาะ 7. ลองกอง 8. สับปะรด
 const ORDERED_CROP_IDS = ['rubber', 'coconut', 'durian', 'mangosteen', 'banana', 'rambutan', 'longkong', 'pineapple'];
 
-// High-resolution photography assets mapping for each crop
+// Photography assets mapping for each crop synchronized with agronomy.ts avatarUrls
 export const CROP_PHOTO_GALLERY: Record<string, { photoUrl: string; tag: string; caption: string; highlight: string }> = {
   rubber: {
-    photoUrl: '/src/assets/images/crop_rubber_tree_1792217647274.jpg',
+    photoUrl: CROPS.find(c => c.id === 'rubber')?.avatarUrl || '',
     tag: 'พืชเศรษฐกิจอุตสาหกรรม',
     caption: 'สวนยางพาราสมบูรณ์ กรีดน้ำยางสม่ำเสมอ คุณภาพน้ำยางเข้มข้น',
     highlight: 'ต้องการ N สร้างใบ และ K เสริมความสมบูรณ์ของท่อน้ำยาง'
   },
   coconut: {
-    photoUrl: '/src/assets/images/crop_coconut_fruit_1792217648038.jpg',
+    photoUrl: CROPS.find(c => c.id === 'coconut')?.avatarUrl || '',
     tag: 'พืชยืนต้นทนเค็ม',
     caption: 'มะพร้าวน้ำหอมและมะพร้าวแกง ทะลายดก ผลใหญ่ น้ำหวานหอม',
     highlight: 'ต้องการ K และคลอรีนสูงเพื่อพัฒนาผลและเนื้อแน่น'
   },
   durian: {
-    photoUrl: '/src/assets/images/crop_durian_fruit_1792217633713.jpg',
+    photoUrl: CROPS.find(c => c.id === 'durian')?.avatarUrl || '',
     tag: 'ราชาแห่งผลไม้ (King of Fruits)',
     caption: 'ทุเรียนหมอนทองผลสวย พูเต็ม หนามเขียว เมล็ดลีบ เนื้อเนียนละเอียด',
     highlight: 'เน้น K สูงช่วงขยายขนาดผล และ Ca-B เสริมขั้วเหนียว'
   },
   mangosteen: {
-    photoUrl: '/src/assets/images/crop_mangosteen_fruit_1792217648582.jpg',
+    photoUrl: CROPS.find(c => c.id === 'mangosteen')?.avatarUrl || '',
     tag: 'ราชินีแห่งผลไม้ (Queen of Fruits)',
     caption: 'มังคุดผิวเนียน กลีบเลี้ยงสด เนื้อขาวฟู รสหวานอมเปรี้ยวกลมกล่อม',
     highlight: 'ชอบร่มเงา ดินร่วนชื้นสม่ำเสมอ ไม่ชอบน้ำท่วมขัง'
   },
   banana: {
-    photoUrl: '/src/assets/images/crop_banana_fruit_1792217649317.jpg',
+    photoUrl: CROPS.find(c => c.id === 'banana')?.avatarUrl || '',
     tag: 'พืชเศรษฐกิจโตไว',
     caption: 'กล้วยหอมทองและกล้วยน้ำว้า เครือใหญ่ หวีถี่ ผลอวบแน่น ผิวเนียน',
     highlight: 'ต้องการ K สูงมากในการพัฒนาผลและน้ำหนักเครือ'
   },
   rambutan: {
-    photoUrl: '/src/assets/images/crop_rambutan_fruit_1792217649456.jpg',
+    photoUrl: CROPS.find(c => c.id === 'rambutan')?.avatarUrl || '',
     tag: 'ไม้ผลยอดนิยมภาคตะวันออกและใต้',
     caption: 'เงาะโรงเรียนผลสด ขนเขียวปลายแดง เนื้อหนาร่อนกรอบ หวานฉ่ำ',
     highlight: 'ต้องการน้ำสม่ำเสมอช่วงติดผล และระบายน้ำดีช่วงฝนชุก'
   },
   longkong: {
-    photoUrl: '/src/assets/images/crop_longkong_fruit_1792217650561.jpg',
+    photoUrl: CROPS.find(c => c.id === 'longkong')?.avatarUrl || '',
     tag: 'ไม้ผลช่อพวงรสหวานเย็น',
     caption: 'ลองกองช่อดก ผลแน่นกลม ผิวสะอาด เนื้อใสไร้เมล็ด รสหวานชื่นใจ',
     highlight: 'ต้องการความชื้นสม่ำเสมอ ร่มเงาพอเหมาะ ดินระบายน้ำดี'
   },
   pineapple: {
-    photoUrl: '/src/assets/images/crop_pineapple_fruit_1792217649729.jpg',
+    photoUrl: CROPS.find(c => c.id === 'pineapple')?.avatarUrl || '',
     tag: 'พืชทนแล้ง ดูแลง่าย',
     caption: 'สับปะรดปัตตาเวียและภูแล ตาตื้น เนื้อสีทองฉ่ำ กลิ่นหอมหวาน',
     highlight: 'ต้องการ N สร้างต้นช่วงแรก และ K+กำมะถันช่วงพัฒนาผล'
@@ -64,34 +64,14 @@ export const CROP_PHOTO_GALLERY: Record<string, { photoUrl: string; tag: string;
 export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc }) => {
   const [activeTab, setActiveTab] = useState<'crops' | 'soil_types' | 'nutrients' | 'productivity'>('crops');
   const [selectedCropId, setSelectedCropId] = useState<string>('rubber');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [activeStageId, setActiveStageId] = useState<string>('stage1');
-  const [showFullArticle, setShowFullArticle] = useState<boolean>(false);
-  const [heroImageMode, setHeroImageMode] = useState<'photo' | 'avatar'>('photo');
 
   // Sorted list of crops based on ordered array
   const orderedCrops = useMemo(() => {
     return ORDERED_CROP_IDS.map(id => CROPS.find(c => c.id === id)!).filter(Boolean);
   }, []);
 
-  // Filter crops based on search query
-  const filteredCrops = useMemo(() => {
-    if (!searchQuery.trim()) return orderedCrops;
-    const q = searchQuery.toLowerCase().trim();
-    return orderedCrops.filter(c =>
-      c.nameTh.toLowerCase().includes(q) ||
-      c.nameEn.toLowerCase().includes(q) ||
-      c.category.toLowerCase().includes(q) ||
-      c.variety.toLowerCase().includes(q)
-    );
-  }, [orderedCrops, searchQuery]);
-
   const selectedCrop: CropInfo = CROPS.find(c => c.id === selectedCropId) || orderedCrops[0];
   const cropKnowledge: CropDetailedKnowledge = CROP_KNOWLEDGE_LIST[selectedCrop.id] || CROP_KNOWLEDGE_LIST.rubber;
-  const heroPhoto = CROP_PHOTO_GALLERY[selectedCrop.id] || CROP_PHOTO_GALLERY.durian;
-
-  // Selected stage details
-  const activeStage = selectedCrop.stages.find(s => s.id === activeStageId) || selectedCrop.stages[0];
 
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 pt-4 pb-20">
@@ -105,14 +85,11 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-400/20 text-emerald-200 text-xs font-bold mb-3 border border-emerald-400/30">
             <span className="material-symbols-outlined text-[16px]">menu_book</span>
-            <span>คู่มือวิชาการ & คลังข้อมูลพืชเกษตรแม่นยำ</span>
+            <span>TipGROW คู่มือดิน</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             ข้อมูลพืช 8 ชนิดและการจัดการปุ๋ย
           </h1>
-          <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed font-normal">
-            รวบรวมลักษณะพืช ระยะปลูก ความต้องการธาตุอาหาร การปรับใช้กับชนิดดิน และเทคนิคการใส่ปุ๋ยให้ได้ผลผลิตสูงสุด
-          </p>
         </div>
       </div>
 
@@ -127,10 +104,7 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
           }`}
         >
           <span className="material-symbols-outlined text-[18px]">psychiatry</span>
-          <span>ข้อมูลพืช 8 ชนิด</span>
-          <span className="ml-1 px-1.5 py-0.2 rounded-full bg-emerald-700 text-emerald-100 text-[10px]">
-            8
-          </span>
+          <span>ข้อมูลพืช</span>
         </button>
         <button
           onClick={() => setActiveTab('soil_types')}
@@ -175,45 +149,18 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
           
           {/* Section: Visual Crop Ribbon Selector */}
           <div className="bg-white rounded-3xl p-5 sm:p-6 border border-stone-200/90 shadow-xs space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
-                  <h2 className="text-base sm:text-lg font-black text-emerald-950">
-                    เลือกพืชเพื่อดูข้อมูลและรูปภาพสื่อสาร
-                  </h2>
-                </div>
-                <p className="text-xs text-stone-500 mt-0.5">
-                  คลิกที่พืชเพื่อดูรูปผลผลิต เทคนิคการใส่ปุ๋ย และการปรับสภาพดิน
-                </p>
-              </div>
-
-              {/* Quick Search Input */}
-              <div className="relative w-full sm:w-72">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-[18px]">
-                  search
-                </span>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="ค้นหาชื่อพืช เช่น ทุเรียน, ยาง..."
-                  className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-stone-200 text-xs text-stone-800 focus:outline-hidden focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-700 transition-all bg-stone-50"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 text-xs"
-                  >
-                    ✕
-                  </button>
-                )}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                <h2 className="text-base sm:text-lg font-black text-emerald-950">
+                  เลือกพืชที่สนใจ
+                </h2>
               </div>
             </div>
 
             {/* 8 Crop Cards Grid with Photos */}
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 pt-1">
-              {filteredCrops.map((c, index) => {
+              {orderedCrops.map((c) => {
                 const isSelected = c.id === selectedCropId;
                 const photoData = CROP_PHOTO_GALLERY[c.id];
                 const orderNumber = ORDERED_CROP_IDS.indexOf(c.id) + 1;
@@ -223,7 +170,6 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                     key={c.id}
                     onClick={() => {
                       setSelectedCropId(c.id);
-                      setActiveStageId(c.stages[0]?.id || 'stage1');
                     }}
                     className={`group relative rounded-2xl p-2.5 sm:p-3 text-left transition-all cursor-pointer flex flex-col justify-between border ${
                       isSelected
@@ -255,15 +201,6 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                         }`}
                         referrerPolicy="no-referrer"
                       />
-                      {/* Avatar Overlay Badge */}
-                      <div className="absolute bottom-1 right-1 w-6 h-6 rounded-lg bg-white/90 p-0.5 shadow-xs border border-emerald-900/10">
-                        <img
-                          src={c.avatarUrl}
-                          alt={c.nameTh}
-                          className="w-full h-full object-contain"
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
                     </div>
 
                     {/* Titles */}
@@ -275,20 +212,13 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                       </h3>
                       <p className="text-[10px] text-stone-500 truncate">{c.nameEn}</p>
                     </div>
-
-                    {/* Spacing quick tag */}
-                    <div className="mt-1 pt-1 border-t border-stone-200/60 text-[9px] text-stone-500 font-medium truncate">
-                      {c.defaultTreesPerRai} ต้น/ไร่
-                    </div>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* ========================================================================= */}
           {/* HERO VISUAL SHOWCASE FOR THE SELECTED CROP */}
-          {/* ========================================================================= */}
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-sm space-y-8">
             
             {/* Top Bar: Title & Primary CTA */}
@@ -311,9 +241,6 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                   <h2 className="text-2xl sm:text-3xl font-black text-emerald-950 tracking-tight">
                     {selectedCrop.nameTh} <span className="text-stone-400 font-medium text-lg sm:text-xl">({selectedCrop.nameEn})</span>
                   </h2>
-                  <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
-                    <strong>พันธุ์แนะนำ:</strong> {selectedCrop.variety}
-                  </p>
                 </div>
               </div>
 
@@ -327,151 +254,92 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
               </button>
             </div>
 
-            {/* Split Visual Showcase: Left Photo Card + Right KPI Specs */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Visual KPI Specs Cards & Key Attributes */}
+            <div className="space-y-4">
               
-              {/* Left (5 cols): Large High-Resolution Crop Photograph */}
-              <div className="lg:col-span-5 rounded-3xl overflow-hidden border border-emerald-900/10 shadow-xs bg-stone-900 relative flex flex-col justify-between group min-h-[300px]">
-                <img
-                  src={heroImageMode === 'photo' ? heroPhoto.photoUrl : selectedCrop.avatarUrl}
-                  alt={selectedCrop.nameTh}
-                  className={`w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-500 ${
-                    heroImageMode === 'avatar' ? 'bg-[#f0f9ed] object-contain p-6' : ''
-                  }`}
-                  referrerPolicy="no-referrer"
-                />
-                
-                {/* Image Top Overlay */}
-                <div className="relative z-10 p-4 flex items-center justify-between bg-gradient-to-b from-black/70 via-black/20 to-transparent">
-                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-emerald-300 font-bold text-xs border border-white/20">
-                    {heroPhoto.tag}
+              {/* 4 Quick KPI Visual Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                {/* KPI 1: ระยะปลูก */}
+                <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 shadow-2xs flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px]">straighten</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-emerald-800 font-semibold block">ระยะปลูกมาตรฐาน</span>
+                    <strong className="text-sm sm:text-base font-black text-emerald-950">
+                      {selectedCrop.spacingDesc}
+                    </strong>
+                  </div>
+                </div>
+
+                {/* KPI 2: จำนวนต้นต่อไร่ */}
+                <div className="p-4 rounded-2xl bg-teal-50/60 border border-teal-200 shadow-2xs flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px]">forest</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-teal-800 font-semibold block">จำนวนต้นต่อไร่ (เฉลี่ย)</span>
+                    <strong className="text-sm sm:text-base font-black text-teal-950">
+                      {selectedCrop.defaultTreesPerRai} ต้น/ไร่
+                    </strong>
+                  </div>
+                </div>
+
+                {/* KPI 3: pH ดินที่เหมาะสม */}
+                <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-2xs flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px]">science</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-amber-800 font-semibold block">ระดับ pH ดินที่เหมาะสม</span>
+                    <strong className="text-sm sm:text-base font-black text-amber-950">
+                      5.8 - 6.5 <span className="text-[11px] font-normal text-stone-500">(กรดอ่อน)</span>
+                    </strong>
+                  </div>
+                </div>
+
+                {/* KPI 4: น้ำและการระบายน้ำ */}
+                <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 shadow-2xs flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
+                    <span className="material-symbols-outlined text-[20px]">water_drop</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-blue-800 font-semibold block">ความต้องการน้ำ</span>
+                    <strong className="text-sm sm:text-base font-black text-blue-950">
+                      ชุ่มชื้น / ระบายน้ำดี
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Agronomic Quick Facts Banner */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-50 via-emerald-50/40 to-stone-50 border border-stone-200 space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-900">
+                  <span className="material-symbols-outlined text-emerald-700 text-[18px]">psychiatry</span>
+                  <span>สรุปสาระสำคัญด้านการจัดการปุ๋ยสำหรับ {selectedCrop.nameTh}</span>
+                </div>
+                <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-normal">
+                  {cropKnowledge.sections.nutritionRequirements}
+                </p>
+              </div>
+
+              {/* Direct Action Chips */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
+                <span className="text-stone-400 font-medium">สูตรปุ๋ยเด่นประจำพืช:</span>
+                {selectedCrop.stages.map((stg) => (
+                  <span
+                    key={stg.id}
+                    className="px-2.5 py-1 rounded-xl bg-stone-100 text-stone-800 font-bold border border-stone-200 flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[14px] text-emerald-700">inventory_2</span>
+                    <span>{stg.commercialFormula}</span>
                   </span>
-
-                  {/* Switch between Fruit Photo and Plant Icon */}
-                  <div className="flex items-center gap-1 bg-black/60 backdrop-blur-md p-1 rounded-xl border border-white/20 text-[11px] text-white">
-                    <button
-                      onClick={() => setHeroImageMode('photo')}
-                      className={`px-2 py-0.5 rounded-lg cursor-pointer transition-all ${
-                        heroImageMode === 'photo' ? 'bg-emerald-600 font-bold text-white' : 'hover:bg-white/20'
-                      }`}
-                    >
-                      รูปผลผลิต
-                    </button>
-                    <button
-                      onClick={() => setHeroImageMode('avatar')}
-                      className={`px-2 py-0.5 rounded-lg cursor-pointer transition-all ${
-                        heroImageMode === 'avatar' ? 'bg-emerald-600 font-bold text-white' : 'hover:bg-white/20'
-                      }`}
-                    >
-                      ไอคอนพืช
-                    </button>
-                  </div>
-                </div>
-
-                {/* Image Bottom Overlay with Caption */}
-                <div className="relative z-10 p-4 sm:p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white space-y-1">
-                  <div className="flex items-center gap-1.5 text-emerald-300 text-xs font-bold">
-                    <span className="material-symbols-outlined text-[16px]">verified</span>
-                    <span>ภาพถ่ายสื่อสารลักษณะผลผลิตจริง</span>
-                  </div>
-                  <p className="text-xs sm:text-sm font-medium leading-relaxed text-stone-100">
-                    {heroPhoto.caption}
-                  </p>
-                  <p className="text-[11px] text-emerald-300 font-semibold pt-1">
-                    💡 จุดสังเกต: {heroPhoto.highlight}
-                  </p>
-                </div>
+                ))}
               </div>
 
-              {/* Right (7 cols): 4 Visual KPI Specs Cards & Key Attributes */}
-              <div className="lg:col-span-7 flex flex-col justify-between space-y-4">
-                
-                {/* 4 Quick KPI Visual Cards */}
-                <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                  {/* KPI 1: ระยะปลูก */}
-                  <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 shadow-2xs flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[20px]">straighten</span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-emerald-800 font-semibold block">ระยะปลูกมาตรฐาน</span>
-                      <strong className="text-sm sm:text-base font-black text-emerald-950">
-                        {selectedCrop.spacingDesc}
-                      </strong>
-                    </div>
-                  </div>
-
-                  {/* KPI 2: จำนวนต้นต่อไร่ */}
-                  <div className="p-4 rounded-2xl bg-teal-50/60 border border-teal-200 shadow-2xs flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[20px]">forest</span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-teal-800 font-semibold block">จำนวนต้นต่อไร่ (เฉลี่ย)</span>
-                      <strong className="text-sm sm:text-base font-black text-teal-950">
-                        {selectedCrop.defaultTreesPerRai} ต้น/ไร่
-                      </strong>
-                    </div>
-                  </div>
-
-                  {/* KPI 3: pH ดินที่เหมาะสม */}
-                  <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 shadow-2xs flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[20px]">science</span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-amber-800 font-semibold block">ระดับ pH ดินที่เหมาะสม</span>
-                      <strong className="text-sm sm:text-base font-black text-amber-950">
-                        5.8 - 6.5 <span className="text-[11px] font-normal text-stone-500">(กรดอ่อน)</span>
-                      </strong>
-                    </div>
-                  </div>
-
-                  {/* KPI 4: น้ำและการระบายน้ำ */}
-                  <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 shadow-2xs flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-[20px]">water_drop</span>
-                    </div>
-                    <div>
-                      <span className="text-[11px] text-blue-800 font-semibold block">ความต้องการน้ำ</span>
-                      <strong className="text-sm sm:text-base font-black text-blue-950">
-                        ชุ่มชื้น / ระบายน้ำดี
-                      </strong>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Agronomic Quick Facts Banner */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-stone-50 via-emerald-50/40 to-stone-50 border border-stone-200 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-emerald-900">
-                    <span className="material-symbols-outlined text-emerald-700 text-[18px]">psychiatry</span>
-                    <span>สรุปสาระสำคัญด้านการจัดการปุ๋ยสำหรับ {selectedCrop.nameTh}</span>
-                  </div>
-                  <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-normal">
-                    {cropKnowledge.sections.nutritionRequirements}
-                  </p>
-                </div>
-
-                {/* Direct Action Chips */}
-                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  <span className="text-stone-400 font-medium">สูตรปุ๋ยเด่นประจำพืช:</span>
-                  {selectedCrop.stages.map((stg) => (
-                    <span
-                      key={stg.id}
-                      className="px-2.5 py-1 rounded-xl bg-stone-100 text-stone-800 font-bold border border-stone-200 flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-[14px] text-emerald-700">inventory_2</span>
-                      <span>{stg.commercialFormula}</span>
-                    </span>
-                  ))}
-                </div>
-
-              </div>
             </div>
 
-            {/* ========================================================================= */}
-            {/* 5 VISUAL INFOGRAPHIC CARDS (COMMUNICATE CLEARLY WITH PICTURES & ICONS) */}
-            {/* ========================================================================= */}
+            {/* INFOGRAPHIC CARDS SECTION */}
             <div className="space-y-6 pt-4">
               <div className="flex items-center justify-between border-b border-stone-200 pb-3">
                 <div className="flex items-center gap-2">
@@ -576,227 +444,12 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                 </div>
               </div>
 
-              {/* CARD 2: อินโฟกราฟิกภาพผังแนวทรงพุ่มและรัศมีรากดูดซึมปุ๋ย (Canopy & Root Zone Diagram) */}
-              <div className="rounded-3xl p-5 sm:p-6 bg-gradient-to-br from-emerald-50/70 via-teal-50/40 to-stone-50 border border-emerald-200 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold">
-                      2
-                    </div>
-                    <div>
-                      <h4 className="text-sm sm:text-base font-black text-emerald-950">
-                        ผังเทคนิคการหว่านปุ๋ยและแนวรากดูดซึม (Canopy Drip Line Diagram)
-                      </h4>
-                      <p className="text-[11px] text-stone-500">
-                        ตำแหน่งที่ถูกต้องช่วยให้รากดูดซึมปุ๋ยได้มากกว่า 90% และป้องกันโคนเน่า
-                      </p>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-900 font-bold text-[11px]">
-                    เทคนิคภาคสนาม
-                  </span>
-                </div>
-
-                {/* SVG Visual Graphic Diagram */}
-                <div className="bg-white rounded-2xl p-4 sm:p-6 border border-emerald-100 shadow-2xs">
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                    
-                    {/* SVG Graphic (7 cols) */}
-                    <div className="md:col-span-7 flex flex-col items-center justify-center">
-                      <svg viewBox="0 0 460 220" className="w-full max-w-[420px] h-auto">
-                        {/* Ground line */}
-                        <line x1="20" y1="160" x2="440" y2="160" stroke="#78716c" strokeWidth="3" strokeDasharray="4 4" />
-                        <text x="25" y="152" fill="#78716c" fontSize="10" fontWeight="bold">ผิวดิน (Ground Level)</text>
-
-                        {/* Tree Canopy */}
-                        <path d="M 170 160 Q 150 110 190 70 Q 230 40 270 70 Q 310 110 290 160 Z" fill="#2d6a4f" opacity="0.15" />
-                        <circle cx="230" cy="85" r="55" fill="#2d6a4f" />
-                        <circle cx="195" cy="95" r="42" fill="#40916c" />
-                        <circle cx="265" cy="95" r="42" fill="#52b788" />
-                        <text x="230" y="90" textAnchor="middle" fill="#ffffff" fontSize="12" fontWeight="bold">เรือนยอดทรงพุ่ม</text>
-
-                        {/* Trunk */}
-                        <rect x="222" y="125" width="16" height="35" fill="#6c584c" rx="2" />
-
-                        {/* Roots underneath */}
-                        {/* Tap root */}
-                        <line x1="230" y1="160" x2="230" y2="205" stroke="#6c584c" strokeWidth="4" />
-                        {/* Feeder roots extending to drip line */}
-                        <path d="M 230 165 Q 190 175 145 180" fill="none" stroke="#2d6a4f" strokeWidth="2.5" />
-                        <path d="M 230 170 Q 270 180 315 180" fill="none" stroke="#2d6a4f" strokeWidth="2.5" />
-                        <path d="M 145 180 Q 130 185 110 185" fill="none" stroke="#52b788" strokeWidth="2" strokeDasharray="3 2" />
-                        <path d="M 315 180 Q 330 185 350 185" fill="none" stroke="#52b788" strokeWidth="2" strokeDasharray="3 2" />
-
-                        {/* Feeder root zone dots */}
-                        <circle cx="125" cy="183" r="4" fill="#1b4332" />
-                        <circle cx="140" cy="180" r="4" fill="#1b4332" />
-                        <circle cx="320" cy="180" r="4" fill="#1b4332" />
-                        <circle cx="335" cy="183" r="4" fill="#1b4332" />
-
-                        {/* Drop lines for Drip Line */}
-                        <line x1="135" y1="95" x2="135" y2="160" stroke="#047857" strokeWidth="1.5" strokeDasharray="3 3" />
-                        <line x1="325" y1="95" x2="325" y2="160" stroke="#047857" strokeWidth="1.5" strokeDasharray="3 3" />
-
-                        {/* Correct zone markers */}
-                        <rect x="110" y="145" width="50" height="22" rx="6" fill="#10b981" />
-                        <text x="135" y="160" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">จุดใส่ปุ๋ย ✅</text>
-
-                        <rect x="300" y="145" width="50" height="22" rx="6" fill="#10b981" />
-                        <text x="325" y="160" textAnchor="middle" fill="#ffffff" fontSize="10" fontWeight="bold">จุดใส่ปุ๋ย ✅</text>
-
-                        {/* Wrong zone marker at trunk */}
-                        <rect x="206" y="132" width="48" height="20" rx="5" fill="#ef4444" />
-                        <text x="230" y="146" textAnchor="middle" fill="#ffffff" fontSize="9" fontWeight="bold">ห้ามใส่ ❌</text>
-
-                        {/* Label Feeder Root */}
-                        <text x="230" y="210" textAnchor="middle" fill="#1b4332" fontSize="10" fontWeight="bold">
-                          บริเวณรากฝอยดูดซึมปุ๋ย (Feeder Root Zone)
-                        </text>
-                      </svg>
-                    </div>
-
-                    {/* Do's & Don'ts Checklist (5 cols) */}
-                    <div className="md:col-span-5 space-y-3">
-                      {/* Do */}
-                      <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
-                        <div className="flex items-center gap-1.5 text-emerald-900 font-black text-xs">
-                          <span className="material-symbols-outlined text-[16px] text-emerald-700">check_circle</span>
-                          <span>สิ่งที่ควรทำ (Best Practice)</span>
-                        </div>
-                        <ul className="text-xs text-stone-700 space-y-1 list-disc list-inside">
-                          <li>หว่านรอบแนวรัศมีทรงพุ่ม (จุดที่รากฝอยแผ่ถึง)</li>
-                          <li>ใส่เมื่อดินมีความชื้นพอเหมาะ และให้น้ำตามสม่ำเสมอ</li>
-                          <li>สำหรับต้นเล็ก ให้เว้นระยะจากโคนต้นอย่างน้อย 30-50 ซม.</li>
-                        </ul>
-                      </div>
-
-                      {/* Don't */}
-                      <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 space-y-1">
-                        <div className="flex items-center gap-1.5 text-rose-900 font-black text-xs">
-                          <span className="material-symbols-outlined text-[16px] text-rose-700">cancel</span>
-                          <span>สิ่งที่ไม่ควรทำ (Avoid)</span>
-                        </div>
-                        <ul className="text-xs text-stone-700 space-y-1 list-disc list-inside">
-                          <li>ห้ามกองปุ๋ยชิดโคนต้นเด็ดขาด (เสี่ยงรากไหม้และโคนเน่า)</li>
-                          <li>หลีกเลี่ยงการใส่ก่อนฝนตกหนัก ปุ๋ยจะไหลหนีไปกับน้ำ</li>
-                          <li>ไม่ใส่ปุ๋ยขณะดินแห้งจัด เพราะปุ๋ยจะไม่ละลาย</li>
-                        </ul>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-                <p className="text-xs text-stone-600 bg-white/70 p-3 rounded-xl border border-stone-200">
-                  <strong>คำแนะนำจาก TipGROW:</strong> {cropKnowledge.sections.applicationMethod}
-                </p>
-              </div>
-
-              {/* CARD 3: ความต้องการธาตุอาหาร N - P - K และธาตุรอง (Nutrient Demand Meters) */}
-              <div className="rounded-3xl p-5 sm:p-6 bg-white border border-stone-200 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center font-bold">
-                      3
-                    </div>
-                    <div>
-                      <h4 className="text-sm sm:text-base font-black text-emerald-950">
-                        สัดส่วนธาตุอาหารหลัก (N - P - K) และบทบาทต่อ {selectedCrop.nameTh}
-                      </h4>
-                      <p className="text-[11px] text-stone-500">
-                        พืชแต่ละชนิดต้องการสัดส่วนปุ๋ยต่างกันตามสรีรวิทยาของพืช
-                      </p>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-900 font-bold text-[11px]">
-                    โภชนาการพืช
-                  </span>
-                </div>
-
-                {/* 3 Nutrient Blocks: N, P, K */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-                  
-                  {/* N */}
-                  <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="w-9 h-9 rounded-xl bg-blue-600 text-white font-black text-base flex items-center justify-center">
-                          N
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-900 text-[10px] font-bold">
-                          ใบ & ลำต้น
-                        </span>
-                      </div>
-                      <h5 className="font-bold text-sm text-blue-950 mb-1">ไนโตรเจน (Nitrogen)</h5>
-                      <p className="text-xs text-stone-700 leading-relaxed">
-                        จำเป็นต่อการแตกใบอ่อน ฟื้นฟูต้น สร้างคลอโรฟิลล์ และขยายขนาดทรงพุ่ม
-                      </p>
-                    </div>
-                    <div className="mt-3 pt-2 border-t border-blue-200/80 text-[11px] text-blue-900 font-bold">
-                      สูตรตัวอย่าง: 46-0-0, 20-8-20, 21-0-0
-                    </div>
-                  </div>
-
-                  {/* P */}
-                  <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="w-9 h-9 rounded-xl bg-amber-600 text-white font-black text-base flex items-center justify-center">
-                          P
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-bold">
-                          ราก ดอก & เมล็ด
-                        </span>
-                      </div>
-                      <h5 className="font-bold text-sm text-amber-950 mb-1">ฟอสฟอรัส (Phosphorus)</h5>
-                      <p className="text-xs text-stone-700 leading-relaxed">
-                        พัฒนาระบบรากฝอย ถ่ายทอดพลังงาน และกระตุ้นการสร้างตาดอกและการติดผล
-                      </p>
-                    </div>
-                    <div className="mt-3 pt-2 border-t border-amber-200/80 text-[11px] text-amber-900 font-bold">
-                      สูตรตัวอย่าง: 8-24-24, 18-46-0
-                    </div>
-                  </div>
-
-                  {/* K */}
-                  <div className="p-4 rounded-2xl bg-rose-50/70 border border-rose-200 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="w-9 h-9 rounded-xl bg-rose-600 text-white font-black text-base flex items-center justify-center">
-                          K
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full bg-rose-100 text-rose-900 text-[10px] font-bold">
-                          ผลผลิต & คุณภาพ
-                        </span>
-                      </div>
-                      <h5 className="font-bold text-sm text-rose-950 mb-1">โพแทสเซียม (Potassium)</h5>
-                      <p className="text-xs text-stone-700 leading-relaxed">
-                        ขยายขนาดผล สะสมแป้งสร้างเนื้อ เพิ่มความหวาน หรือเพิ่มความเข้มข้นน้ำยาง
-                      </p>
-                    </div>
-                    <div className="mt-3 pt-2 border-t border-rose-200/80 text-[11px] text-rose-900 font-bold">
-                      สูตรตัวอย่าง: 0-0-60, 12-12-17, 0-0-50
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Secondary Nutrients Strip */}
-                <div className="p-3.5 rounded-xl bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-teal-700 text-[18px]">interests</span>
-                    <strong className="text-stone-800">ธาตุอาหารรองที่ขาดไม่ได้:</strong>
-                    <span className="text-stone-600">แคลเซียม (Ca - ขั้วเหนียว/ผลไม่แตก), แมกนีเซียม (Mg - สังเคราะห์แสง), กำมะถัน (S - กลิ่นและรส)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* CARD 4: การดูแลรักษาดินและการจัดการน้ำ (Soil Care & Mulching) */}
+              {/* CARD 2: การดูแลรักษาดินและการจัดการน้ำ (Soil Care & Mulching) */}
               <div className="rounded-3xl p-5 sm:p-6 bg-stone-50/80 border border-stone-200 space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-xl bg-amber-600 text-white flex items-center justify-center font-bold">
-                      4
+                      2
                     </div>
                     <div>
                       <h4 className="text-sm sm:text-base font-black text-emerald-950">
@@ -849,155 +502,6 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
                 </div>
               </div>
 
-              {/* CARD 5: แผนระยะการเจริญเติบโต (Growth Stages Protocol with Timeline) */}
-              <div className="rounded-3xl p-5 sm:p-6 bg-white border-2 border-emerald-200 space-y-5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold">
-                      5
-                    </div>
-                    <div>
-                      <h4 className="text-sm sm:text-base font-black text-emerald-950">
-                        ระยะการเจริญเติบโตและสูตรปุ๋ยเป้าหมาย ({selectedCrop.stages.length} ระยะ)
-                      </h4>
-                      <p className="text-[11px] text-stone-500">
-                        คลิกเลือกระยะเพื่อดูเป้าหมาย N-P-K และไทม์ไลน์การใส่ปุ๋ยรายสัปดาห์
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Stage Switcher Pills */}
-                  <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1">
-                    {selectedCrop.stages.map((stg, sIdx) => (
-                      <button
-                        key={stg.id}
-                        onClick={() => setActiveStageId(stg.id)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
-                          stg.id === activeStage.id
-                            ? 'bg-emerald-800 text-white shadow-2xs'
-                            : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
-                        }`}
-                      >
-                        <span>ระยะที่ {sIdx + 1}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Active Stage Detail Visual Box */}
-                <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-emerald-50/50 border border-emerald-200 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
-                        <span className="material-symbols-outlined text-[24px]">
-                          {activeStage.icon || 'spa'}
-                        </span>
-                      </div>
-                      <div>
-                        <h5 className="text-base font-black text-emerald-950">
-                          {activeStage.name}
-                        </h5>
-                        <p className="text-xs text-stone-600 mt-0.5">{activeStage.desc}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col items-start sm:items-end gap-1">
-                      <span className="px-3 py-1 rounded-full bg-emerald-700 text-white font-black text-xs shadow-xs">
-                        สูตรแนะนำ: {activeStage.commercialFormula}
-                      </span>
-                      <span className="text-[11px] text-stone-500">
-                        อัตราการใช้: {activeStage.commercialRate}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Target N-P-K Meters */}
-                  <div className="grid grid-cols-3 gap-3 bg-white p-3.5 rounded-xl border border-stone-200 text-center">
-                    <div className="p-2 rounded-lg bg-blue-50/70 border border-blue-200">
-                      <span className="text-[10px] text-blue-700 font-bold block">N (ไนโตรเจน)</span>
-                      <strong className="text-base font-black text-blue-950">{activeStage.targetN}</strong>
-                      <span className="text-[10px] text-stone-500 block">กก./ไร่</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200">
-                      <span className="text-[10px] text-amber-700 font-bold block">P (ฟอสฟอรัส)</span>
-                      <strong className="text-base font-black text-amber-950">{activeStage.targetP}</strong>
-                      <span className="text-[10px] text-stone-500 block">กก./ไร่</span>
-                    </div>
-                    <div className="p-2 rounded-lg bg-rose-50/70 border border-rose-200">
-                      <span className="text-[10px] text-rose-700 font-bold block">K (โพแทสเซียม)</span>
-                      <strong className="text-base font-black text-rose-950">{activeStage.targetK}</strong>
-                      <span className="text-[10px] text-stone-500 block">กก./ไร่</span>
-                    </div>
-                  </div>
-
-                  {/* Action Timeline Checklist */}
-                  {activeStage.timeline && activeStage.timeline.length > 0 && (
-                    <div className="space-y-2 pt-1">
-                      <span className="text-xs font-bold text-emerald-950 flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[16px] text-emerald-700">schedule</span>
-                        <span>ไทม์ไลน์การปฏิบัติงานสำหรับระยะนี้:</span>
-                      </span>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        {activeStage.timeline.map((item, tIdx) => (
-                          <div key={tIdx} className="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs space-y-1">
-                            <span className="px-2 py-0.5 rounded-md bg-stone-100 text-stone-800 text-[10px] font-bold">
-                              {item.week}
-                            </span>
-                            <h6 className="font-bold text-xs text-stone-900 mt-1">{item.title}</h6>
-                            <p className="text-[11px] text-stone-500 leading-snug">{item.desc}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Calculate this crop button */}
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-xs text-stone-500">
-                    ต้องการทราบปริมาณปุ๋ยรวมสำหรับแปลงของคุณหรือไม่?
-                  </span>
-                  <button
-                    onClick={() => onSelectCropForCalc(selectedCrop.id)}
-                    className="px-4 py-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white font-bold text-xs transition-all flex items-center gap-1.5 cursor-pointer"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">calculate</span>
-                    <span>คำนวณปุ๋ยแปลงนี้</span>
-                  </button>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Collapsible: Full Academic Article (for deep reading without visual clutter) */}
-            <div className="pt-2 border-t border-stone-200">
-              <button
-                onClick={() => setShowFullArticle(!showFullArticle)}
-                className="w-full py-3 px-4 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-stone-200 text-xs font-bold text-stone-700 flex items-center justify-between cursor-pointer transition-all"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-emerald-700 text-[18px]">article</span>
-                  <span>อ่านบทความและคู่มือฉบับเต็มของ {selectedCrop.nameTh} ({cropKnowledge.fullTextParagraphs.length} ย่อหน้า)</span>
-                </div>
-                <span className="material-symbols-outlined text-stone-400">
-                  {showFullArticle ? 'expand_less' : 'expand_more'}
-                </span>
-              </button>
-
-              {showFullArticle && (
-                <div className="mt-4 space-y-3 p-4 sm:p-6 rounded-2xl bg-stone-50/60 border border-stone-200 text-xs sm:text-sm text-stone-800 leading-relaxed animate-fadeIn">
-                  {cropKnowledge.fullTextParagraphs.map((par, pIdx) => (
-                    <div key={pIdx} className="p-4 rounded-xl bg-white border border-stone-200 shadow-2xs flex items-start gap-3">
-                      <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-900 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                        {pIdx + 1}
-                      </span>
-                      <p className="flex-1 font-normal text-stone-700 leading-relaxed">
-                        {par}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
           </div>

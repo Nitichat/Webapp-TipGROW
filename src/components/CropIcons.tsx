@@ -6,7 +6,7 @@ export const MascotTonKla: React.FC<{ className?: string }> = ({
 }) => (
   <div className={`relative flex items-center justify-center ${className}`}>
     <img
-      src="/src/assets/images/regenerated_image_1791928013693.png"
+      src="https://drive.google.com/thumbnail?id=1fZnm7nPeNZUlrWZZ93MBsGHCRVZQYaWv"
       alt="TipGROW Mascot Logo"
       className="w-full h-full object-contain select-none"
       referrerPolicy="no-referrer"
@@ -77,7 +77,7 @@ export const TipGrowLogo: React.FC<{
 export const CROP_IMAGES: Record<string, string> = {
   durian: '/src/assets/images/regenerated_image_1792218133979.png',
   rubber: '/src/assets/images/regenerated_image_1792218137108.png',
-  coconut: '/src/assets/images/regenerated_image_1792218138819.png',
+  coconut: '/src/assets/images/regenerated_image_1792514477782.png',
   mangosteen: '/src/assets/images/regenerated_image_1792218141843.png',
   rambutan: '/src/assets/images/regenerated_image_1792218144926.png',
   longkong: '/src/assets/images/regenerated_image_1792218146804.png',

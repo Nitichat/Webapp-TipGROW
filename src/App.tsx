@@ -105,10 +105,6 @@ export default function App() {
             currentUser={currentUser}
             initialCropId={selectedCropForCalc}
             onOpenAuth={() => {}}
-            onOpenReport={(res) => {
-              setReportResult(res);
-              setIsReportModalOpen(true);
-            }}
             onOpenKnowledge={() => setCurrentTab('knowledge')}
           />
         )}

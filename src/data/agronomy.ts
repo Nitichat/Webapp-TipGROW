@@ -2,7 +2,7 @@ export interface CropInfo {
   id: string;
   nameTh: string;
   nameEn: string;
-  category: string;
+  category?: string;
   variety: string;
   defaultTreesPerRai: number;
   spacingDesc: string;
@@ -34,12 +34,11 @@ export const CROPS: CropInfo[] = [
     id: 'durian',
     nameTh: 'ทุเรียน',
     nameEn: 'Durian',
-    category: 'ไม้ผลยืนต้น',
     variety: 'หมอนทอง / ชะนี / ก้านยาว',
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (มาตรฐานสวนผลไม้)',
     emoji: '🍈',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218133979.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1rggkeXEt801-bXkAwQOcpDqqNMJQ6l1f',
     stages: [
       {
         id: 'stage1',
@@ -119,12 +118,11 @@ export const CROPS: CropInfo[] = [
     id: 'rubber',
     nameTh: 'ยางพารา',
     nameEn: 'Rubber Tree',
-    category: 'พืชไร่/ยาง',
     variety: 'RRIM 600 / RRIT 251 / PB 235',
     defaultTreesPerRai: 76,
     spacingDesc: 'ระยะปลูก 3x7 ม. (ประมาณ 76 ต้น/ไร่)',
     emoji: '🌳',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218137108.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1XSOpqiHe3p41TvGSORycU2zdp4GegqDu',
     stages: [
       {
         id: 'stage1',
@@ -186,12 +184,11 @@ export const CROPS: CropInfo[] = [
     id: 'coconut',
     nameTh: 'มะพร้าว',
     nameEn: 'Coconut',
-    category: 'มะพร้าวน้ำหอม/แกง',
     variety: 'มะพร้าวน้ำหอมก้นจีบ / มะพร้าวแกงชุมพร',
     defaultTreesPerRai: 22,
     spacingDesc: 'ระยะปลูก 8.5x8.5 ม. (แกง) หรือ 6x6 ม. (น้ำหอม ~44 ต้น/ไร่)',
     emoji: '🥥',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218138819.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1cI7gZg1vAIOs3lHhzEPE6D6QxOGdNt9p',
     stages: [
       {
         id: 'stage1',
@@ -253,12 +250,11 @@ export const CROPS: CropInfo[] = [
     id: 'mangosteen',
     nameTh: 'มังคุด',
     nameEn: 'Mangosteen',
-    category: 'ราชินีผลไม้',
     variety: 'มังคุดเมืองนนท์ / มังคุดใต้ / มังคุดจันทบุรี',
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (ประมาณ 25 ต้น/ไร่)',
     emoji: '🟣',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218141843.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=14VwqKCNO9_Y2fFFdPCTrtvY6t3xeXA2d',
     stages: [
       {
         id: 'stage1',
@@ -320,12 +316,11 @@ export const CROPS: CropInfo[] = [
     id: 'rambutan',
     nameTh: 'เงาะ',
     nameEn: 'Rambutan',
-    category: 'โรงเรียน/สีชมพู',
     variety: 'เงาะโรงเรียนนาสาร / เงาะสีชมพู',
     defaultTreesPerRai: 25,
     spacingDesc: 'ระยะปลูก 8x8 ม. (ประมาณ 25 ต้น/ไร่)',
     emoji: '🔴',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218144926.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1_aG6jlhKDWPjAIIWLg_trtiNCGZxykT3',
     stages: [
       {
         id: 'stage1',
@@ -387,12 +382,11 @@ export const CROPS: CropInfo[] = [
     id: 'longkong',
     nameTh: 'ลองกอง',
     nameEn: 'Longkong',
-    category: 'พันธุ์ตันหยงมัส',
     variety: 'ลองกองตันหยงมัส / ดูกู',
     defaultTreesPerRai: 30,
     spacingDesc: 'ระยะปลูก 7x7 ม. หรือ 6x8 ม. (~30 ต้น/ไร่)',
     emoji: '🟡',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218146804.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=15T-qcGaNCpfq4rs4EQ9ex6a9Ui-jZiOH',
     stages: [
       {
         id: 'stage1',
@@ -454,12 +448,11 @@ export const CROPS: CropInfo[] = [
     id: 'banana',
     nameTh: 'กล้วย',
     nameEn: 'Banana',
-    category: 'กล้วยหอม/น้ำว้า/ไข่',
     variety: 'กล้วยหอมทอง / กล้วยน้ำว้ามะลิอ่อง / กล้วยไข่',
     defaultTreesPerRai: 400,
     spacingDesc: 'ระยะปลูก 2x2 ม. (~400 กอ/ไร่)',
     emoji: '🍌',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218148833.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1ap-LhnjVTlQGfUCRMvUDAS13_HWnFFVH',
     stages: [
       {
         id: 'stage1',
@@ -521,12 +514,11 @@ export const CROPS: CropInfo[] = [
     id: 'pineapple',
     nameTh: 'สับปะรด',
     nameEn: 'Pineapple',
-    category: 'พืชไร่/อุตสาหกรรม',
     variety: 'ปัตตาเวีย (ส่งโรงงาน) / ภูแล / ตราดสีทอง',
     defaultTreesPerRai: 8000,
     spacingDesc: 'ปลูกแถวคู่ 30x50x90 ซม. (~8,000 ต้น/ไร่)',
     emoji: '🍍',
-    avatarUrl: '/src/assets/images/regenerated_image_1792218150785.png',
+    avatarUrl: 'https://drive.google.com/thumbnail?id=1J8Y6huQEIsCD49Se8kybBzcDOq8yYMRl',
     stages: [
       {
         id: 'stage1',

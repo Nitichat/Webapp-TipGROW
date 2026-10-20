@@ -18,7 +18,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenKnowledge, onGoHome, onOpe
           title="TipGROW - คลิกเพื่อกลับหน้าแรก"
         >
           <div className="w-6 h-6 rounded-lg bg-emerald-600/10 flex items-center justify-center p-0.5 group-hover:scale-110 transition-transform">
-            <img src="/src/assets/images/regenerated_image_1792216389026.png" alt="TipGROW" className="w-full h-full object-contain" />
+            <img src="https://drive.google.com/thumbnail?id=1S2ny1EwgRUB4xcr1IgdWKpnrvZbhSgfK" alt="TipGROW" className="w-full h-full object-contain" />
           </div>
           <span className="font-black text-emerald-950 text-sm group-hover:text-emerald-700 transition-colors">
             TipGROW

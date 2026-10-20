@@ -4,12 +4,13 @@ import {
   collection, 
   query, 
   where, 
-  orderBy, 
   onSnapshot, 
   deleteDoc, 
   doc 
 } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import { CROPS } from '../data/agronomy.ts';
+import { normalizeImageUrl } from '../utils/imageExport.ts';
 import { CROP_IMAGES } from './CropIcons.tsx';
 
 interface HistoryRecord {
@@ -63,7 +64,19 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   const [records, setRecords] = useState<HistoryRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [cropFilter, setCropFilter] = useState<string>('all');
+  
+  // State สำหรับจัดการการลบ
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null); // สำหรับแสดง Modal
+
+  // Helper function to resolve crop avatar image URL from agronomy.ts
+  const getCropAvatarSrc = (cropId: string) => {
+    const crop = CROPS.find(c => c.id === cropId);
+    if (crop?.avatarUrl) {
+      return normalizeImageUrl(crop.avatarUrl);
+    }
+    return CROP_IMAGES[cropId] || CROP_IMAGES.durian;
+  };
 
   useEffect(() => {
     if (!currentUser) {
@@ -111,9 +124,10 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
     }
   }, [currentUser]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('คุณต้องการลบประวัติการคำนวณแปลงนี้หรือไม่?')) return;
-    setDeletingId(id);
+  // ฟังก์ชันลบข้อมูลจริง (ทำงานหลังจากกด ยืนยัน ใน Modal)
+  const executeDelete = async (id: string) => {
+    setConfirmDeleteId(null); // ปิด Modal
+    setDeletingId(id); // แสดงสถานะกำลังลบบนการ์ด
     try {
       await deleteDoc(doc(db, 'fertilizerCalculations', id));
     } catch (error) {
@@ -152,20 +166,48 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
   }
 
   return (
-    <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6 pt-4 pb-16">
+    <div className="w-full max-w-[1180px] mx-auto px-4 sm:px-6 pt-4 pb-16 relative">
+      
+      {/* ===================== Custom Modal ยืนยันการลบ ===================== */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-stone-900/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-[320px] shadow-2xl text-center animate-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-4">
+              <span className="material-symbols-outlined text-[32px]">delete_forever</span>
+            </div>
+            <h3 className="text-lg font-bold text-stone-900 mb-2">ยืนยันการลบประวัติ</h3>
+            <p className="text-sm text-stone-500 mb-6">
+              คุณต้องการลบประวัติการคำนวณแปลงนี้ใช่หรือไม่? ข้อมูลที่ถูกลบจะไม่สามารถกู้คืนได้
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="flex-1 py-3 rounded-2xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-sm transition-all cursor-pointer"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={() => executeDelete(confirmDeleteId)}
+                className="flex-1 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm transition-all cursor-pointer shadow-sm shadow-rose-200"
+              >
+                ลบข้อมูล
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ================================================================ */}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-black text-emerald-950">
-            ประวัติการคำนวณสูตรปุ๋ย
+          <h1 className="text-3xl sm:text-4xl font-black text-emerald-950 tracking-tight">
+            ประวัติการคำนวณปริมาณปุ๋ย
           </h1>
-          <p className="text-xs sm:text-sm text-stone-500">
-            บันทึกแปลงของคุณทั้งหมดใน Firebase Project Wepapp Fertilizer ({currentUser.email})
-          </p>
         </div>
 
         <button
           onClick={onNewCalculation}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer self-start sm:self-center"
+          className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-800 hover:bg-emerald-900 text-white rounded-full text-xs sm:text-sm font-bold shadow-xs transition-all cursor-pointer self-start sm:self-center"
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
           <span>คำนวณแปลงใหม่</span>
@@ -184,19 +226,15 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         >
           ทั้งหมด ({records.length})
         </button>
+
         {['durian', 'rubber', 'coconut', 'mangosteen', 'rambutan', 'longkong', 'banana', 'pineapple'].map((cId) => {
-          const names: Record<string, string> = {
-            durian: 'ทุเรียน',
-            rubber: 'ยางพารา',
-            coconut: 'มะพร้าว',
-            mangosteen: 'มังคุด',
-            rambutan: 'เงาะ',
-            longkong: 'ลองกอง',
-            banana: 'กล้วย',
-            pineapple: 'สับปะรด',
-          };
+          const cropObj = CROPS.find(c => c.id === cId);
+          const cropNameTh = cropObj ? cropObj.nameTh : cId;
           const count = records.filter(r => r.cropId === cId).length;
           if (count === 0) return null;
+
+          const filterAvatarSrc = getCropAvatarSrc(cId);
+
           return (
             <button
               key={cId}
@@ -207,15 +245,20 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
                   : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
               }`}
             >
-              {CROP_IMAGES[cId] && (
-                <img
-                  src={CROP_IMAGES[cId]}
-                  alt=""
-                  className="w-4 h-4 rounded-full object-cover shrink-0"
-                  referrerPolicy="no-referrer"
-                />
-              )}
-              <span>{names[cId]} ({count})</span>
+              <img
+                src={filterAvatarSrc}
+                alt={cropNameTh}
+                className="w-4 h-4 rounded-full object-cover shrink-0"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  const fallback = CROP_IMAGES[cId] || CROP_IMAGES.durian;
+                  if (target.src !== fallback) {
+                    target.src = fallback;
+                  }
+                }}
+                referrerPolicy="no-referrer"
+              />
+              <span>{cropNameTh} ({count})</span>
             </button>
           );
         })}
@@ -231,7 +274,7 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
           <span className="text-4xl block mb-2">🌱</span>
           <h3 className="text-base font-bold text-stone-800 mb-1">ยังไม่มีประวัติการคำนวณ</h3>
           <p className="text-xs text-stone-500 mb-5">
-            เริ่มต้นคำนวณสูตรปุ๋ยเฉพาะแปลงพืชเศรษฐกิจของคุณ และกด "บันทึกแปลงนี้" ได้ทันที
+            เริ่มต้นคำนวณปริมาณปุ๋ยเฉพาะแปลงพืชเศรษฐกิจของคุณ และกด "บันทึกแปลงนี้" ได้ทันที
           </p>
           <button
             onClick={onNewCalculation}
@@ -242,82 +285,96 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredRecords.map((item) => (
-            <div
-              key={item.id}
-              className="bg-white rounded-3xl p-5 border border-stone-200/90 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-start justify-between gap-2 mb-3">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={CROP_IMAGES[item.cropId] || CROP_IMAGES.durian}
-                      alt={item.cropName}
-                      className="w-12 h-12 rounded-2xl object-cover shadow-2xs border border-emerald-900/10 shrink-0"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold">
-                        {item.cropName}
+          {filteredRecords.map((item) => {
+            const cardAvatarSrc = getCropAvatarSrc(item.cropId);
+
+            return (
+              <div
+                key={item.id}
+                className="bg-white rounded-3xl p-5 border border-stone-200/90 shadow-xs hover:shadow-md transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={cardAvatarSrc}
+                        alt={item.cropName}
+                        className="w-12 h-12 rounded-2xl object-cover shadow-2xs border border-emerald-900/10 shrink-0 bg-stone-50"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = CROP_IMAGES[item.cropId] || CROP_IMAGES.durian;
+                          if (target.src !== fallback) {
+                            target.src = fallback;
+                          }
+                        }}
+                        referrerPolicy="no-referrer"
+                      />
+                      <div>
+                        <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-[10px] font-bold">
+                          {item.cropName}
+                        </span>
+                        <h3 className="text-base font-bold text-emerald-950 mt-0.5 truncate">
+                          {item.plotName}
+                        </h3>
+                      </div>
+                    </div>
+                    
+                    {/* ปุ่มกดลบ เปลี่ยนมาเรียกใช้งาน Modal (setConfirmDeleteId) แทน */}
+                    <button
+                      onClick={() => setConfirmDeleteId(item.id)}
+                      disabled={deletingId === item.id}
+                      className="text-stone-400 hover:text-rose-600 transition-colors p-1 cursor-pointer"
+                      title="ลบรายการนี้"
+                    >
+                      <span className={`material-symbols-outlined text-[18px] ${deletingId === item.id ? 'animate-spin' : ''}`}>
+                        {deletingId === item.id ? 'sync' : 'delete'}
                       </span>
-                      <h3 className="text-base font-bold text-emerald-950 mt-0.5 truncate">
-                        {item.plotName}
-                      </h3>
+                    </button>
+
+                  </div>
+
+                  <div className="text-xs text-stone-500 mb-3 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">calendar_today</span>
+                    <span>{new Date(item.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+
+                  <div className="bg-stone-50 rounded-2xl p-3 space-y-1.5 text-xs mb-3 border border-stone-200/60">
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">ระยะพืช:</span>
+                      <span className="font-semibold text-stone-800 truncate max-w-[150px]">{item.growthStage}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">พื้นที่ / จำนวนต้น:</span>
+                      <span className="font-semibold text-stone-800">{item.areaRai} ไร่ ({item.treeCount} ต้น{item.treesPerRai ? ` • ${item.treesPerRai} ต้น/ไร่` : ''})</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-stone-500">ประเภทดิน / pH:</span>
+                      <span className="font-semibold text-stone-800">{item.soilTypeNameTh || item.soilTexture} (pH {item.soilPh})</span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    disabled={deletingId === item.id}
-                    className="text-stone-400 hover:text-rose-600 transition-colors p-1"
-                    title="ลบรายการนี้"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">
-                      {deletingId === item.id ? 'sync' : 'delete'}
-                    </span>
-                  </button>
-                </div>
 
-                <div className="text-xs text-stone-500 mb-3 flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[14px]">calendar_today</span>
-                  <span>{new Date(item.createdAt).toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-
-                <div className="bg-stone-50 rounded-2xl p-3 space-y-1.5 text-xs mb-3 border border-stone-200/60">
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">ระยะพืช:</span>
-                    <span className="font-semibold text-stone-800 truncate max-w-[150px]">{item.growthStage}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">พื้นที่ / จำนวนต้น:</span>
-                    <span className="font-semibold text-stone-800">{item.areaRai} ไร่ ({item.treeCount} ต้น{item.treesPerRai ? ` • ${item.treesPerRai} ต้น/ไร่` : ''})</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-stone-500">ประเภทดิน / pH:</span>
-                    <span className="font-semibold text-stone-800">{item.soilTypeNameTh || item.soilTexture} (pH {item.soilPh})</span>
+                  {/* Prescription Highlights */}
+                  <div className="border-t border-stone-100 pt-3 space-y-1 text-xs">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-stone-600 font-medium">สูตรสำเร็จ:</span>
+                      <span className="font-bold text-emerald-900">{item.commercialFormula} ({item.commercialBags} กระสอบ)</span>
+                    </div>
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-stone-600 font-medium">ปุ๋ยสั่งตัดเดี่ยว:</span>
+                      <span className="font-bold text-emerald-700">{item.totalCustomKg} กก. (ประหยัด {item.savingsPercent}%)</span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Prescription Highlights */}
-                <div className="border-t border-stone-100 pt-3 space-y-1 text-xs">
-                  <div className="flex justify-between items-baseline">
-                    <span className="text-stone-600 font-medium">สูตรสำเร็จ:</span>
-                    <span className="font-bold text-emerald-900">{item.commercialFormula} ({item.commercialBags} กระสอบ)</span>
-                  </div>
-                  <div className="flex justify-between items-baseline">
-                    <span className="text-stone-600 font-medium">ปุ๋ยสั่งตัดเดี่ยว:</span>
-                    <span className="font-bold text-emerald-700">{item.totalCustomKg} กก. (ประหยัด {item.savingsPercent}%)</span>
-                  </div>
+                <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
+                  <span className="text-stone-500 font-medium">ค่าปุ๋ยประมาณการ:</span>
+                  <span className="text-base font-black text-emerald-950">
+                    ฿{(item.customCost || item.estimatedCost || 0).toLocaleString()}
+                  </span>
                 </div>
               </div>
-
-              <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-xs">
-                <span className="text-stone-500 font-medium">ค่าปุ๋ยประมาณการ:</span>
-                <span className="text-base font-black text-emerald-950">
-                  ฿{(item.customCost || item.estimatedCost || 0).toLocaleString()}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
