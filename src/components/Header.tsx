@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { TipGrowLogo } from './CropIcons.tsx';
 import { User } from 'firebase/auth';
+// ลบ import { TipGrowLogo } ออกไปแล้ว เพราะเราใช้รูปจาก Google Drive แทน
 
 interface HeaderProps {
   currentTab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team';
@@ -24,9 +24,21 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="fixed top-0 left-0 w-full z-40 bg-white/95 backdrop-blur-md border-b border-emerald-900/10 shadow-xs">
       <div className="h-16 sm:h-20 max-w-[1240px] mx-auto px-3 sm:px-6 flex items-center justify-between gap-2 sm:gap-4">
+        
         {/* Brand Logo - clicking logo icon or word TipGROW navigates to home */}
-        <div className="flex items-center shrink-0">
-          <TipGrowLogo onClick={() => onSelectTab('home')} />
+        <div 
+          className="flex items-center gap-2 shrink-0 cursor-pointer group"
+          onClick={() => onSelectTab('home')}
+        >
+          <img 
+            src="https://drive.google.com/thumbnail?id=1fZnm7nPeNZUlrWZZ93MBsGHCRVZQYaWv&sz=w500" 
+            alt="TipGROW Logo" 
+            className="h-9 sm:h-11 w-auto object-contain select-none group-hover:scale-105 transition-transform"
+            referrerPolicy="no-referrer"
+          />
+          <span className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight hidden sm:block">
+            TipGROW
+          </span>
         </div>
 
         {/* Navigation Tabs - All menus on the exact same line as TipGROW */}
@@ -97,6 +109,7 @@ export const Header: React.FC<HeaderProps> = ({
                     src={currentUser.photoURL}
                     alt="Profile"
                     className="w-8 h-8 rounded-full object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-xs">

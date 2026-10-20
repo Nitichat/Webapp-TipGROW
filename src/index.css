@@ -1,17 +1,33 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Mali', cursive, sans-serif;
+}
+
 @layer base {
   html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Sarabun', 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Mali', cursive, sans-serif;
     color: #0e1f10;
     background-color: #f4f9f3;
   }
+
+  input, button, select, textarea {
+    font-family: 'Mali', cursive, sans-serif;
+  }
+}
+
+body {
+  font-family: 'Mali', cursive, sans-serif;
 }
 
 .font-num {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Mali', cursive, sans-serif;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined' !important;
 }
 
 @media print {
@@ -21,6 +37,7 @@
   body {
     background: white !important;
     color: black !important;
+    font-family: 'Mali', cursive, sans-serif !important;
   }
   .print-area {
     width: 100% !important;
@@ -28,5 +45,6 @@
     margin: 0 !important;
     padding: 0 !important;
     box-shadow: none !important;
+    border: none !important;
   }
 }

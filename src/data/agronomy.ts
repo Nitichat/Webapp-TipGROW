@@ -586,8 +586,46 @@ export const CROPS: CropInfo[] = [
   }
 ];
 
+export type SoilTextureType = 'clay' | 'loam' | 'sandy';
+
+export interface SoilTypeDetail {
+  id: SoilTextureType;
+  nameTh: string;
+  nameEn: string;
+  description: string;
+  textureModifier: number;
+  advice: string;
+}
+
+export const SOIL_TYPES: SoilTypeDetail[] = [
+  {
+    id: 'clay',
+    nameTh: 'ดินเหนียว',
+    nameEn: 'Clay Soil',
+    description: 'เนื้อละเอียด อุ้มน้ำและปุ๋ยได้ดีมาก แต่ระบายน้ำช้า เสี่ยงน้ำขัง',
+    textureModifier: 0.6,
+    advice: 'ดินเหนียวอุ้มน้ำและธาตุอาหารได้ดี ไม่สูญเสียง่าย แต่ระบายน้ำช้า ควรระวังน้ำขังรากเน่า และหลีกเลี่ยงการใส่ปุ๋ยขณะดินแฉะจัด แนะนำหว่านรอบรัศมีทรงพุ่มและพรวนดินกลบเบาๆ'
+  },
+  {
+    id: 'loam',
+    nameTh: 'ดินร่วน',
+    nameEn: 'Loam Soil',
+    description: 'ดินในอุดมคติ โปร่งร่วนซุย ระบายน้ำและอากาศดี มีความอุดมสมบูรณ์สูง',
+    textureModifier: 0.55,
+    advice: 'ดินร่วนมีความสมดุลของอนุภาคดินดีที่สุด อุ้มน้ำและถ่ายเทอากาศได้ดีเยี่ยม พืชสามารถดูดซึมปุ๋ยได้เต็มที่ สามารถใส่ปุ๋ยตามอัตราแนะนำปกติและรดน้ำตามได้ทันที'
+  },
+  {
+    id: 'sandy',
+    nameTh: 'ดินทราย',
+    nameEn: 'Sandy Soil',
+    description: 'อนุภาคดินหยาบ ระบายน้ำเร็วมาก เก็บน้ำและธาตุอาหารได้น้อย สูญเสียง่าย',
+    textureModifier: 0.35,
+    advice: 'ดินทรายมีความสามารถในการเก็บน้ำและปุ๋ยต่ำ ธาตุอาหารถูกชะล้างได้ง่ายมาก แนะนำให้แบ่งใส่ปุ๋ยเป็น 2-3 ครั้งย่อย และควรใส่ปุ๋ยหมัก/ปุ๋ยคอกร่วมด้วยเพื่อเพิ่มอินทรียวัตถุในดิน'
+  }
+];
+
 export interface SoilAssessment {
-  texture: 'clay' | 'sandy_loam' | 'sandy';
+  texture: SoilTextureType;
   ph: number;
   n_ppm: number;
   p_ppm: number;
@@ -601,6 +639,10 @@ export interface CalculationResult {
   totalRai: number;
   totalSqMeters: number;
   totalTrees: number;
+  treesPerRai: number;
+  spacingRowMeters: number;
+  spacingTreeMeters: number;
+  spacingDesc: string;
   
   // Nutrients kg/rai
   deficitN: number;
@@ -626,6 +668,18 @@ export interface CalculationResult {
   commercialKg: number;
   commercialCost: number;
   commercialRateText: string;
+
+  // Required output metrics
+  ratePerRaiKg: number;
+  ratePerTreeKg: number;
+  totalPlotKg: number;
+
+  // Recommendations and advice
+  soilTypeNameTh: string;
+  soilAdvice: string;
+  stageAdvice: string;
+  applicationAdvice: string;
+  wateringAdvice: string;
 
   // Custom single nutrient (Urea, DAP, MOP)
   customUreaKg: number;
@@ -653,19 +707,42 @@ export function calculateFertilizer(
   rai: number,
   ngan: number,
   wah: number,
-  soil: SoilAssessment
+  soil: SoilAssessment,
+  customTreesPerRai?: number,
+  spacing?: { rowMeters: number; treeMeters: number }
 ): CalculationResult {
   const crop = CROPS.find(c => c.id === cropId) || CROPS[0];
   const stage = crop.stages.find(s => s.id === stageId) || crop.stages[0];
 
-  const totalRai = Math.max(0.1, rai + (ngan / 4) + (wah / 400));
+  const totalRai = Math.max(0.01, rai + (ngan / 4) + (wah / 400));
   const totalSqMeters = Math.round(totalRai * 1600);
-  const totalTrees = Math.round(totalRai * crop.defaultTreesPerRai);
 
-  // Soil Nutrient Contribution in kg/rai based on soil test
-  // In Thailand agronomic guidelines: 
-  // Available N (kg/rai) ≈ N_ppm * 0.5 (texture modifier)
-  const textureModifier = soil.texture === 'clay' ? 0.6 : soil.texture === 'sandy_loam' ? 0.5 : 0.4;
+  // Spacing and trees per rai
+  let rowMeters = spacing?.rowMeters ?? 8;
+  let treeMeters = spacing?.treeMeters ?? 8;
+
+  if (!spacing) {
+    if (crop.id === 'durian') { rowMeters = 8; treeMeters = 8; }
+    else if (crop.id === 'rubber') { rowMeters = 7; treeMeters = 3; }
+    else if (crop.id === 'coconut') { rowMeters = 6; treeMeters = 6; }
+    else if (crop.id === 'mangosteen') { rowMeters = 8; treeMeters = 8; }
+    else if (crop.id === 'rambutan') { rowMeters = 8; treeMeters = 8; }
+    else if (crop.id === 'longkong') { rowMeters = 7; treeMeters = 7; }
+    else if (crop.id === 'banana') { rowMeters = 2; treeMeters = 2; }
+    else if (crop.id === 'pineapple') { rowMeters = 0.5; treeMeters = 0.4; }
+  }
+
+  const treesPerRai = customTreesPerRai && customTreesPerRai > 0
+    ? customTreesPerRai
+    : Math.max(1, Math.round(1600 / (rowMeters * treeMeters)));
+
+  const totalTrees = Math.max(1, Math.round(totalRai * treesPerRai));
+  const spacingDesc = `${rowMeters} x ${treeMeters} เมตร`;
+
+  // Soil Nutrient Contribution in kg/rai based on soil test and soil texture
+  const soilDetail = SOIL_TYPES.find(s => s.id === soil.texture) || SOIL_TYPES[3];
+  const textureModifier = soilDetail.textureModifier;
+
   const soilSupplyN = Math.min(stage.targetN * 0.8, Math.round(soil.n_ppm * textureModifier * 10) / 10);
   const soilSupplyP = Math.min(stage.targetP * 0.8, Math.round(soil.p_ppm * textureModifier * 10) / 10);
   const soilSupplyK = Math.min(stage.targetK * 0.8, Math.round(soil.k_ppm * textureModifier * 0.25 * 10) / 10);
@@ -693,24 +770,26 @@ export function calculateFertilizer(
   }
 
   // Commercial Formula calculation
-  // Total nutrient needed for whole plot
   const totalDeficitN = deficitN * totalRai;
   const totalDeficitP = deficitP * totalRai;
   const totalDeficitK = deficitK * totalRai;
 
   // Standard Commercial Calculation
-  const commercialKg = Math.max(50, Math.round((totalDeficitP / 0.24) || (totalDeficitN / 0.15) || 50));
-  const commercialBags = Math.max(1, Math.round(commercialKg / 50));
-  const actualCommercialKg = commercialBags * 50;
-  const commercialCost = commercialBags * stage.commercialPricePerBag;
+  const estimatedKg = Math.max(25, Math.round((totalDeficitP / 0.24) || (totalDeficitN / 0.15) || 50));
+  const commercialBags = Math.max(1, Math.round(estimatedKg / 50));
+  const actualCommercialKg = Math.max(25, Math.round(estimatedKg));
+  const commercialCost = Math.round((actualCommercialKg / 50) * stage.commercialPricePerBag);
+
+  // Rate per Rai (กก./ไร่) & Rate per Tree (กก./ต้น)
+  const ratePerRaiKg = Math.round((actualCommercialKg / totalRai) * 10) / 10;
+  const ratePerTreeKg = totalTrees > 0 ? Math.round((actualCommercialKg / totalTrees) * 100) / 100 : 0;
 
   // Rate text per tree or per rai
   let commercialRateText = '';
   if (totalTrees > 0 && crop.id !== 'pineapple') {
-    const kgPerTree = (actualCommercialKg / totalTrees).toFixed(1);
-    commercialRateText = `${kgPerTree} กิโลกรัม / ต้น`;
+    commercialRateText = `${ratePerTreeKg} กิโลกรัม / ต้น`;
   } else {
-    commercialRateText = `${Math.round(actualCommercialKg / totalRai)} กิโลกรัม / ไร่`;
+    commercialRateText = `${ratePerRaiKg} กิโลกรัม / ไร่`;
   }
 
   // Custom Single Nutrients (ปุ๋ยสั่งตัดแม่ปุ๋ยเดี่ยว 3 ชนิด):
@@ -730,6 +809,9 @@ export function calculateFertilizer(
   const savingsAmount = Math.max(0, commercialCost - customCost);
   const savingsPercent = commercialCost > 0 ? Math.round((savingsAmount / commercialCost) * 1000) / 10 : 18.4;
 
+  const applicationAdvice = 'ใส่ปุ๋ยรอบแนวรัศมีทรงพุ่ม (บริเวณปลายทรงพุ่มที่มีรากฝอยหนาแน่น) ห่างโคนต้น 50 - 100 ซม. พรวนดินกลบเบาๆ เพื่อป้องกันการสูญเสียไนโตรเจนจากการระเหย';
+  const wateringAdvice = 'รดน้ำให้ดินชุ่มชื้นสม่ำเสมอก่อนหรือหลังใส่ปุ๋ยทันที เพื่อช่วยละลายธาตุอาหารให้รากพืชดูดซึมได้รวดเร็ว หลีกเลี่ยงการใส่ปุ๋ยช่วงแดดจัดจัดหรือช่วงฝนตกชะล้างรุนแรง';
+
   return {
     matchPercent: Math.min(99, Math.max(88, 94 + (soil.ph >= 6.0 && soil.ph <= 6.5 ? 4 : -2))),
     crop,
@@ -737,6 +819,10 @@ export function calculateFertilizer(
     totalRai,
     totalSqMeters,
     totalTrees,
+    treesPerRai,
+    spacingRowMeters: rowMeters,
+    spacingTreeMeters: treeMeters,
+    spacingDesc,
     deficitN,
     deficitP,
     deficitK,
@@ -756,6 +842,14 @@ export function calculateFertilizer(
     commercialKg: actualCommercialKg,
     commercialCost,
     commercialRateText,
+    ratePerRaiKg,
+    ratePerTreeKg,
+    totalPlotKg: actualCommercialKg,
+    soilTypeNameTh: soilDetail.nameTh,
+    soilAdvice: soilDetail.advice,
+    stageAdvice: stage.desc,
+    applicationAdvice,
+    wateringAdvice,
     customUreaKg: ureaKg,
     customDapKg: dapKg,
     customPotashKg: potashKg,

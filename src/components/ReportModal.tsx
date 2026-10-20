@@ -80,8 +80,8 @@ export const ReportModal: React.FC<ReportModalProps> = ({
           </div>
 
           {/* Plot Information Section */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-stone-50 p-4 rounded-2xl border border-stone-200 text-xs">
-            <div className="flex items-center gap-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-50 p-4 rounded-2xl border border-stone-200 text-xs">
+            <div className="flex items-center gap-2.5 col-span-2 sm:col-span-1">
               <img
                 src={result.crop.avatarUrl}
                 alt={result.crop.nameTh}
@@ -95,46 +95,42 @@ export const ReportModal: React.FC<ReportModalProps> = ({
               </div>
             </div>
             <div>
-              <span className="text-stone-400 block font-medium">ระยะการเจริญเติบโต:</span>
+              <span className="text-stone-400 block font-medium text-[11px]">ระยะพืช:</span>
               <span className="font-bold text-emerald-900">{result.stage.name}</span>
             </div>
             <div>
-              <span className="text-stone-400 block font-medium">ขนาดแปลง:</span>
-              <span className="font-bold text-stone-900">{result.totalRai.toFixed(1)} ไร่ ({result.totalSqMeters.toLocaleString()} ตร.ม.)</span>
+              <span className="text-stone-400 block font-medium text-[11px]">พื้นที่ปลูก:</span>
+              <span className="font-bold text-stone-900">{Number.isInteger(result.totalRai) ? result.totalRai : result.totalRai.toFixed(2)} ไร่ ({result.totalSqMeters.toLocaleString()} ตร.ม.)</span>
             </div>
             <div>
-              <span className="text-stone-400 block font-medium">จำนวนต้นประเมิน:</span>
-              <span className="font-bold text-stone-900">{result.totalTrees.toLocaleString()} ต้น</span>
+              <span className="text-stone-400 block font-medium text-[11px]">ประเภทดิน:</span>
+              <span className="font-bold text-emerald-900">{result.soilTypeNameTh}</span>
+            </div>
+            <div>
+              <span className="text-stone-400 block font-medium text-[11px]">ระยะห่างต่อต้น:</span>
+              <span className="font-bold text-stone-900">{result.spacingDesc}</span>
+            </div>
+            <div>
+              <span className="text-stone-400 block font-medium text-[11px]">จำนวนต้นต่อไร่:</span>
+              <span className="font-bold text-stone-900">{result.treesPerRai} ต้น/ไร่</span>
+            </div>
+            <div className="col-span-2">
+              <span className="text-stone-400 block font-medium text-[11px]">จำนวนต้นรวมทั้งแปลง:</span>
+              <span className="font-bold text-emerald-950 text-sm">≈ {result.totalTrees.toLocaleString()} ต้น</span>
             </div>
           </div>
 
-          {/* Soil Diagnostic Diagnosis */}
-          <div>
-            <h4 className="text-sm font-bold text-emerald-950 mb-2 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[18px] text-emerald-800">science</span>
-              ผลการวิเคราะห์สภาพดิน & สถานะธาตุอาหาร
+          {/* Recommendations & Soil Advice Highlight */}
+          <div className="space-y-2 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-200/60 text-xs">
+            <h4 className="text-sm font-bold text-emerald-950 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[18px] text-emerald-800">eco</span>
+              คำแนะนำการจัดการแปลง & การใส่ปุ๋ย
             </h4>
-            <div className="grid grid-cols-4 gap-2 text-center text-xs">
-              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                <span className="block text-stone-500 text-[11px]">pH ดิน</span>
-                <span className="text-base font-extrabold text-emerald-950">{result.phStatus}</span>
-              </div>
-              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                <span className="block text-stone-500 text-[11px]">ไนโตรเจน (N)</span>
-                <span className="text-base font-extrabold text-stone-900">ขาด {result.deficitN} กก./ไร่</span>
-              </div>
-              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                <span className="block text-stone-500 text-[11px]">ฟอสฟอรัส (P)</span>
-                <span className="text-base font-extrabold text-stone-900">ขาด {result.deficitP} กก./ไร่</span>
-              </div>
-              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200">
-                <span className="block text-stone-500 text-[11px]">โพแทสเซียม (K)</span>
-                <span className="text-base font-extrabold text-stone-900">ขาด {result.deficitK} กก./ไร่</span>
-              </div>
+            <div className="text-stone-700 space-y-1.5 leading-relaxed pt-1">
+              <p>• <strong>การจัดการดิน ({result.soilTypeNameTh}):</strong> {result.soilAdvice}</p>
+              <p>• <strong>วิธีการใส่ปุ๋ย:</strong> {result.applicationAdvice}</p>
+              <p>• <strong>การให้น้ำ:</strong> {result.wateringAdvice}</p>
             </div>
-            <p className="text-xs text-stone-600 mt-2 italic bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100">
-              📌 คำแนะนำการปรับปรุงดิน: {result.phAdvice}
-            </p>
           </div>
 
           {/* Fertilizer Prescription Comparison */}
@@ -154,7 +150,8 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                   สูตร {result.commercialFormula}
                 </h5>
                 <ul className="mt-2 space-y-1 text-stone-600">
-                  <li>• ปริมาณรวม: <strong>{result.commercialBags} กระสอบ ({result.commercialKg} กก.)</strong></li>
+                  <li>• ปริมาณต่อไร่: <strong>{result.ratePerRaiKg} กก./ไร่</strong></li>
+                  <li>• ปริมาณรวมทั้งแปลง: <strong>{result.commercialBags} กระสอบ ({result.commercialKg} กก.)</strong></li>
                   <li>• อัตราใส่: <strong>{result.commercialRateText}</strong></li>
                   <li>• ประมาณการต้นทุน: <strong>฿{result.commercialCost.toLocaleString()}</strong></li>
                 </ul>

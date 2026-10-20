@@ -25,13 +25,19 @@ interface HistoryRecord {
   areaWah: number;
   totalSquareMeters: number;
   treeCount: number;
+  treesPerRai?: number;
+  spacingDesc?: string;
   soilTexture: string;
+  soilTypeNameTh?: string;
   soilPh: number;
   soilN: number;
   soilP: number;
   soilK: number;
   commercialFormula: string;
   commercialBags: number;
+  commercialKg?: number;
+  ratePerRaiKg?: number;
+  ratePerTreeKg?: number;
   commercialRatePerTree: string;
   customUreaKg: number;
   customDapKg: number;
@@ -278,16 +284,16 @@ export const HistoryView: React.FC<HistoryViewProps> = ({
 
                 <div className="bg-stone-50 rounded-2xl p-3 space-y-1.5 text-xs mb-3 border border-stone-200/60">
                   <div className="flex justify-between">
-                    <span className="text-stone-500">ระยะ:</span>
+                    <span className="text-stone-500">ระยะพืช:</span>
                     <span className="font-semibold text-stone-800 truncate max-w-[150px]">{item.growthStage}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-stone-500">พื้นที่ / จำนวนต้น:</span>
-                    <span className="font-semibold text-stone-800">{item.areaRai} ไร่ ({item.treeCount} ต้น)</span>
+                    <span className="font-semibold text-stone-800">{item.areaRai} ไร่ ({item.treeCount} ต้น{item.treesPerRai ? ` • ${item.treesPerRai} ต้น/ไร่` : ''})</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-stone-500">ดิน pH:</span>
-                    <span className="font-semibold text-stone-800">{item.soilPh} (N:{item.soilN} P:{item.soilP} K:{item.soilK})</span>
+                    <span className="text-stone-500">ประเภทดิน / pH:</span>
+                    <span className="font-semibold text-stone-800">{item.soilTypeNameTh || item.soilTexture} (pH {item.soilPh})</span>
                   </div>
                 </div>
 

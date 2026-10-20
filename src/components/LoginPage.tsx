@@ -38,7 +38,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* Top Navigation Bar */}
       <header className="w-full bg-white/90 backdrop-blur-md border-b border-emerald-900/10 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <TipGrowLogo />
+          <img 
+            src="https://drive.google.com/thumbnail?id=1fZnm7nPeNZUlrWZZ93MBsGHCRVZQYaWv&sz=w500" 
+            alt="TipGROW Logo" 
+            className="h-9 sm:h-11 w-auto object-contain select-none"
+            referrerPolicy="no-referrer"
+          />
+          <span className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight">TipGROW</span>
         </div>
 
         <div className="flex items-center gap-4 text-xs font-semibold text-emerald-900">
@@ -63,7 +69,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           <div className="md:w-5/12 relative overflow-hidden bg-[#eaf8ea] border-b md:border-b-0 md:border-r border-emerald-100 flex flex-col justify-center items-center p-6 sm:p-8 text-center">
             {/* Background Farm Landscape */}
             <img
-              src="/src/assets/images/regenerated_image_1791929224458.png"
+              src="https://drive.google.com/thumbnail?id=1mnRHcdKjqxtbZp6YWzIksYXHgQ6shGjC"
               alt="TipGROW Farm Landscape"
               className="absolute inset-0 w-full h-full object-cover select-none"
               referrerPolicy="no-referrer"
@@ -74,7 +80,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               {/* TipGROW Mascot Logo */}
               <div className="mb-3">
                 <img
-                  src="/src/assets/images/regenerated_image_1791928013693.png"
+                  src="https://drive.google.com/thumbnail?id=1fZnm7nPeNZUlrWZZ93MBsGHCRVZQYaWv"
                   alt="TipGROW Logo"
                   className="w-40 h-40 sm:w-44 sm:h-44 object-contain select-none drop-shadow-md transform hover:scale-105 transition-transform"
                   referrerPolicy="no-referrer"

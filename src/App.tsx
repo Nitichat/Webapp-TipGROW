@@ -24,6 +24,8 @@ export default function App() {
   const [reportResult, setReportResult] = useState<CalculationResult | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
+  const [selectedCropForCalc, setSelectedCropForCalc] = useState<string>('durian');
+
   // Initialize Firebase Auth listener and test connection
   useEffect(() => {
     testFirestoreConnection();
@@ -101,6 +103,7 @@ export default function App() {
         {currentTab === 'calculator' && (
           <Calculator
             currentUser={currentUser}
+            initialCropId={selectedCropForCalc}
             onOpenAuth={() => {}}
             onOpenReport={(res) => {
               setReportResult(res);
@@ -112,7 +115,10 @@ export default function App() {
 
         {currentTab === 'home' && (
           <HomeOverview
-            onStartCalculation={() => setCurrentTab('calculator')}
+            onStartCalculation={(cropId) => {
+              if (cropId) setSelectedCropForCalc(cropId);
+              setCurrentTab('calculator');
+            }}
             onOpenKnowledge={() => setCurrentTab('knowledge')}
             onOpenAuth={() => {}}
             onOpenTeam={() => setCurrentTab('team')}
@@ -129,7 +135,8 @@ export default function App() {
 
         {currentTab === 'knowledge' && (
           <KnowledgeHub
-            onSelectCropForCalc={() => {
+            onSelectCropForCalc={(cropId) => {
+              if (cropId) setSelectedCropForCalc(cropId);
               setCurrentTab('calculator');
             }}
           />
