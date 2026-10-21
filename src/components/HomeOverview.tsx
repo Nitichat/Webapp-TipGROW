@@ -65,19 +65,16 @@ export const HomeOverview: React.FC<HomeOverviewProps> = ({
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-emerald-950">
+            <h2 className="text-2xl sm:text-3xl font-black text-emerald-950 tracking-tight">
               เลือกพืชที่คุณสนใจ
             </h2>
-            <p className="text-xs text-stone-500">
-              ครอบคลุมอัตราความต้องการธาตุอาหาร N-P-K ตามสรีรวิทยาของแต่ละชนิด
-            </p>
           </div>
           <button
             onClick={() => onStartCalculation('durian')}
-            className="text-xs font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
+            className="text-xs sm:text-sm font-bold text-emerald-800 hover:underline flex items-center gap-1 cursor-pointer"
           >
             <span>ดูทั้งหมด</span>
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            <span className="material-symbols-outlined text-[16px] sm:text-[18px]">arrow_forward</span>
           </button>
         </div>
 

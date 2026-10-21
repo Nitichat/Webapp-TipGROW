@@ -285,7 +285,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
               </div>
               <div>
                 <h2 className="text-base sm:text-lg font-bold text-emerald-950">ชนิดพืช & ระยะพืช</h2>
-                <p className="text-xs text-stone-500">เลือกชนิดพืชเศรษฐกิจและระยะการเจริญเติบโตปัจจุบัน</p>
               </div>
             </div>
             <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
@@ -293,7 +292,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
             </span>
           </div>
 
-          {/* 8 Crop Grid - Updated to link directly to avatarUrl in agronomy.ts */}
+          {/* 8 Crop Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 mb-5">
             {CROPS.map((crop) => {
               const isSelected = crop.id === selectedCropId;
@@ -318,7 +317,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
                     </span>
                   )}
 
-                  {/* Crop Image linking to agronomy.ts avatarUrl */}
                   <div className="w-12 h-12 rounded-2xl overflow-hidden mb-1.5 border border-stone-200 bg-white shadow-2xs shrink-0 p-0.5">
                     <img
                       src={cropAvatarSrc}
@@ -391,7 +389,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
                 <h2 className="text-base sm:text-lg font-bold text-emerald-950">พื้นที่ปลูก & การจัดแปลง</h2>
               </div>
 
-              {/* Input: Area (ไร่ และ งาน) */}
+              {/* Input: Area */}
               <div className="mb-5">
                 <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5 mb-2">
                   <span className="material-symbols-outlined text-emerald-700 text-base">square_foot</span>
@@ -584,12 +582,13 @@ export const Calculator: React.FC<CalculatorProps> = ({
         >
           
           {/* Header of Result Card (Crop Avatar & Overview) */}
-          <div className="flex items-center justify-between gap-4 mb-6 border-b border-emerald-700/60 pb-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 mb-6 border-b border-emerald-700/60 pb-5">
             <div className="flex items-center gap-4">
               <img
                 src={cropImageSrc}
                 alt={selectedCrop.nameTh}
                 className="w-16 h-16 rounded-2xl object-cover shadow-sm border-2 border-emerald-400/40 shrink-0 bg-white/10"
+                crossOrigin="anonymous" 
                 onError={(e) => {
                   const target = e.currentTarget;
                   const fallback = CROP_IMAGES[selectedCrop.id] || CROP_IMAGES.durian;
@@ -617,17 +616,22 @@ export const Calculator: React.FC<CalculatorProps> = ({
               </div>
             </div>
 
-            <div className="hidden sm:block shrink-0">
-              <span className="text-xs font-black tracking-wider uppercase text-emerald-200 bg-white/10 px-3 py-1.5 rounded-xl border border-white/15">
+            {/* Logo Section */}
+            <div className="flex items-center gap-3 shrink-0 self-start sm:self-center">
+              <span className="text-[10px] sm:text-xs font-black tracking-wider uppercase text-emerald-200 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-white/15">
                 ผลการคำนวณปุ๋ยแนะนำ
               </span>
+              <img
+                src="https://wsrv.nl/?url=https%3A%2F%2Fdrive.google.com%2Fthumbnail%3Fid%3D1fZnm7nPeNZUlrWZZ93MBsGHCRVZQYaWv%26sz%3Dw500"
+                alt="TipGROW Logo"
+                className="h-12 sm:h-16 w-auto object-contain drop-shadow-sm opacity-95"
+                crossOrigin="anonymous"
+              />
             </div>
           </div>
 
-          {/* 3 Primary Metric Outputs (1. Rate/Rai -> 2. Total Plot -> 3. Formula) */}
+          {/* 3 Primary Metric Outputs */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            
-            {/* 1. ปริมาณต่อไร่ */}
             <div className="bg-emerald-950/80 backdrop-blur-md rounded-2xl p-5 border border-emerald-500/60 flex flex-col justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-extrabold text-emerald-300 block uppercase tracking-wider mb-1">
@@ -643,7 +647,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
               </div>
             </div>
 
-            {/* 2. ปริมาณรวมทั้งหมด */}
             <div className="bg-emerald-950/80 backdrop-blur-md rounded-2xl p-5 border border-emerald-500/60 flex flex-col justify-between shadow-xs">
               <div>
                 <span className="text-[11px] font-extrabold text-emerald-300 block uppercase tracking-wider mb-1">
@@ -659,7 +662,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
               </div>
             </div>
 
-            {/* 3. สูตรปุ๋ย NPK ที่แนะนำ */}
             <div className="bg-emerald-950/70 backdrop-blur-md rounded-2xl p-5 border border-emerald-600/50 flex flex-col justify-between">
               <div>
                 <span className="text-[11px] font-bold text-emerald-300 block uppercase tracking-wider mb-1">
@@ -675,15 +677,13 @@ export const Calculator: React.FC<CalculatorProps> = ({
                 </span>
               </div>
             </div>
-
           </div>
 
           {/* Advice Details */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
-            
-            {/* คำแนะนำการจัดการตามชนิดดิน */}
             <div className="bg-emerald-950/50 backdrop-blur-xs rounded-2xl p-4 border border-emerald-700/50">
               <div className="flex items-center gap-2 mb-2 text-emerald-300 font-bold text-xs">
+                {/* Fixed icon name from terrain */}
                 <span className="material-symbols-outlined text-[18px]">terrain</span>
                 <span>คำแนะนำการจัดการดิน ({selectedSoilDetail.nameTh})</span>
               </div>
@@ -695,10 +695,10 @@ export const Calculator: React.FC<CalculatorProps> = ({
               </div>
             </div>
 
-            {/* คำแนะนำระยะการเจริญเติบโต */}
             <div className="bg-emerald-950/50 backdrop-blur-xs rounded-2xl p-4 border border-emerald-700/50">
               <div className="flex items-center gap-2 mb-2 text-emerald-300 font-bold text-xs">
-                <span className="material-symbols-outlined text-[18px]">psychology_alt</span>
+                {/* Fixed icon name from psychology_alt to psychology */}
+                <span className="material-symbols-outlined text-[18px]">psychology</span>
                 <span>คำแนะนำระยะพืช ({calculationResult.stage.name})</span>
               </div>
               <p className="text-xs text-emerald-100 leading-relaxed">
@@ -711,12 +711,12 @@ export const Calculator: React.FC<CalculatorProps> = ({
             </div>
           </div>
 
-          {/* Watermark Branding Footer for Exported Image */}
+          {/* Watermark Branding Footer */}
           <div className="pt-4 mt-2 border-t border-emerald-700/50 flex flex-wrap items-center justify-between gap-2 text-[10px] text-emerald-200/80">
             <div className="flex items-center gap-1.5 font-bold">
-              <span className="text-emerald-300">TipGROW Smart Ag Engine</span>
+              <span className="text-emerald-300">TipGROW</span>
               <span>•</span>
-              <span>ระบบคำนวณสูตรและปริมาณปุ๋ยอัจฉริยะแม่นยำสูง</span>
+              <span>ระบบคำนวณปุ๋ย</span>
             </div>
             <div>
               วันที่คำนวณ: {new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
