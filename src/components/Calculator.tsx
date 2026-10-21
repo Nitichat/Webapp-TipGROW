@@ -683,7 +683,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-2">
             <div className="bg-emerald-950/50 backdrop-blur-xs rounded-2xl p-4 border border-emerald-700/50">
               <div className="flex items-center gap-2 mb-2 text-emerald-300 font-bold text-xs">
-                {/* Fixed icon name from terrain */}
                 <span className="material-symbols-outlined text-[18px]">terrain</span>
                 <span>คำแนะนำการจัดการดิน ({selectedSoilDetail.nameTh})</span>
               </div>
@@ -697,7 +696,6 @@ export const Calculator: React.FC<CalculatorProps> = ({
 
             <div className="bg-emerald-950/50 backdrop-blur-xs rounded-2xl p-4 border border-emerald-700/50">
               <div className="flex items-center gap-2 mb-2 text-emerald-300 font-bold text-xs">
-                {/* Fixed icon name from psychology_alt to psychology */}
                 <span className="material-symbols-outlined text-[18px]">psychology</span>
                 <span>คำแนะนำระยะพืช ({calculationResult.stage.name})</span>
               </div>
@@ -746,17 +744,23 @@ export const Calculator: React.FC<CalculatorProps> = ({
               <span>{isExportingImage ? 'กำลังสร้างรูปภาพ...' : 'ดาวน์โหลดรูปภาพ (PNG)'}</span>
             </button>
 
-            {/* Save to Firebase Button */}
+            {/* Save to Firebase Button - Updated to show success state */}
             <button
               type="button"
               onClick={handleSaveToFirebase}
-              disabled={isSaving}
-              className="w-full sm:w-auto px-5 h-12 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-emerald-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-emerald-300 transition-all cursor-pointer"
+              disabled={isSaving || !!saveSuccessMessage}
+              className={`w-full sm:w-auto px-5 h-12 rounded-2xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border transition-all ${
+                saveSuccessMessage 
+                  ? 'bg-emerald-600 text-white border-emerald-600 disabled:opacity-100 cursor-default' 
+                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-950 border-emerald-300 cursor-pointer'
+              } ${isSaving ? 'opacity-70' : ''}`}
             >
-              <span className="material-symbols-outlined text-[20px]">
-                {isSaving ? 'sync' : 'bookmark_add'}
+              <span className={`material-symbols-outlined text-[20px] ${isSaving ? 'animate-spin' : ''}`}>
+                {isSaving ? 'sync' : (saveSuccessMessage ? 'bookmark_added' : 'bookmark_add')}
               </span>
-              <span>{isSaving ? 'กำลังบันทึก...' : 'บันทึกแปลงนี้'}</span>
+              <span>
+                {isSaving ? 'กำลังบันทึก...' : (saveSuccessMessage ? 'บันทึกแล้ว' : 'บันทึกแปลงนี้')}
+              </span>
             </button>
           </div>
         </div>

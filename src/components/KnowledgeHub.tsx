@@ -341,17 +341,6 @@ export const KnowledgeHub: React.FC<KnowledgeHubProps> = ({ onSelectCropForCalc 
 
             {/* INFOGRAPHIC CARDS SECTION */}
             <div className="space-y-6 pt-4">
-              <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-emerald-700 text-[22px]">auto_awesome</span>
-                  <h3 className="text-lg sm:text-xl font-black text-emerald-950">
-                    อินโฟกราฟิกและคู่มือจัดการปุ๋ยสำหรับ {selectedCrop.nameTh}
-                  </h3>
-                </div>
-                <span className="text-xs text-stone-400 font-medium hidden sm:block">
-                  ย่อยข้อมูลเข้าใจง่าย เน้นรูปสื่อสาร
-                </span>
-              </div>
 
               {/* CARD 1: การปรับใช้กับชนิดดิน 3 แบบ (Soil Adaptation Matrix) */}
               <div className="rounded-3xl p-5 sm:p-6 bg-stone-50/80 border border-stone-200 space-y-4">
