@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { User } from 'firebase/auth';
 
@@ -21,6 +21,12 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // State สำหรับ Dropdown เว็บไซต์ที่เกี่ยวข้อง
+  const [showLinksDropdown, setShowLinksDropdown] = useState(false);
+  const [showMobileLinksDropdown, setShowMobileLinksDropdown] = useState(false);
+  
+  const linksDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -44,19 +50,29 @@ export const Header: React.FC<HeaderProps> = ({
     }
   }, [isMobileMenuOpen]);
 
-  // Handle ESC key to close mobile menu
+  // Handle ESC key to close menus
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsMobileMenuOpen(false);
         setShowProfileMenu(false);
+        setShowLinksDropdown(false);
       }
     };
-    if (isMobileMenuOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-    }
+    window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isMobileMenuOpen]);
+  }, []);
+
+  // Handle click outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (linksDropdownRef.current && !linksDropdownRef.current.contains(event.target as Node)) {
+        setShowLinksDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const navItems = [
     { id: 'home' as const, label: 'หน้าแรก', icon: 'home' },
@@ -66,10 +82,16 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'team' as const, label: 'ผู้จัดทำ', icon: 'groups' },
   ];
 
+  const externalLinks = [
+    { label: 'กระทรวงเกษตรและสหกรณ์', url: 'https://www.moac.go.th/site-home', icon: 'account_balance' },
+    { label: 'กรมวิชาการเกษตร', url: 'https://www.doa.go.th/th/', icon: 'science' },
+  ];
+
   const handleSelectTab = (tab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team') => {
     onSelectTab(tab);
     setIsMobileMenuOpen(false);
     setShowProfileMenu(false);
+    setShowLinksDropdown(false);
   };
 
   return (
@@ -111,6 +133,47 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>
               );
             })}
+
+            {/* เว็บไซต์ที่เกี่ยวข้อง Dropdown (Desktop) */}
+            <div className="relative ml-1" ref={linksDropdownRef}>
+              <button
+                onClick={() => setShowLinksDropdown(!showLinksDropdown)}
+                className={`flex items-center gap-1 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                  showLinksDropdown
+                    ? 'text-emerald-800 bg-emerald-50'
+                    : 'text-stone-600 hover:text-emerald-800 hover:bg-emerald-50'
+                }`}
+              >
+                <span>เว็บไซต์ที่เกี่ยวข้อง</span>
+                <span className="material-symbols-outlined text-[18px] transition-transform duration-200" style={{ transform: showLinksDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>
+                  expand_more
+                </span>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showLinksDropdown && (
+                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-[240px] bg-white rounded-2xl shadow-xl border border-stone-200 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-3 py-1.5 mb-1 border-b border-stone-100">
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">ลิงก์หน่วยงานภาครัฐ</span>
+                  </div>
+                  {externalLinks.map((link, index) => (
+                    <a
+                      key={index}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 px-4 py-2.5 text-sm text-stone-700 hover:bg-emerald-50 hover:text-emerald-900 transition-colors group"
+                      onClick={() => setShowLinksDropdown(false)}
+                    >
+                      <span className="material-symbols-outlined text-[20px] text-emerald-600/70 group-hover:text-emerald-700 mt-0.5">
+                        {link.icon}
+                      </span>
+                      <span className="font-semibold leading-tight">{link.label}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right Section: Profile / Auth Button & Mobile Hamburger Button */}
@@ -265,7 +328,7 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Nav Items List */}
-            <div className="flex-1 overflow-y-auto px-4 py-5 space-y-1.5">
+            <div className="flex-1 overflow-y-auto px-4 py-5 space-y-1.5 scrollbar-thin">
               <div className="text-[11px] font-bold text-stone-400 uppercase tracking-wider px-2 mb-2">
                 เมนูนำทาง
               </div>
@@ -288,6 +351,49 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                 );
               })}
+
+              {/* เว็บไซต์ที่เกี่ยวข้อง Dropdown (Mobile) */}
+              <div className="mt-2 pt-2 border-t border-stone-100">
+                <button
+                  onClick={() => setShowMobileLinksDropdown(!showMobileLinksDropdown)}
+                  className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-bold transition-all text-left cursor-pointer ${
+                    showMobileLinksDropdown ? 'bg-emerald-50 text-emerald-900' : 'text-stone-700 hover:bg-stone-50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3.5">
+                    <span className="material-symbols-outlined text-[22px] text-emerald-700">link</span>
+                    <span>เว็บไซต์ที่เกี่ยวข้อง</span>
+                  </div>
+                  <span className="material-symbols-outlined transition-transform duration-300" style={{ transform: showMobileLinksDropdown ? 'rotate(180deg)' : 'rotate(0)' }}>
+                    expand_more
+                  </span>
+                </button>
+                
+                {/* Mobile Dropdown Items (Collapsible) */}
+                <div 
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    showMobileLinksDropdown ? 'max-h-[200px] opacity-100 mt-1' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="pl-[52px] pr-4 space-y-1 pb-2">
+                    {externalLinks.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 py-2.5 text-sm text-stone-600 hover:text-emerald-800 font-semibold"
+                        onClick={() => setIsMobileMenuOpen(false)} // Close drawer on link click
+                      >
+                         <span className="material-symbols-outlined text-[18px] text-stone-400">
+                          {link.icon}
+                        </span>
+                        {link.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
 
               {/* User Account Section in Drawer */}
               <div className="pt-5 mt-4 border-t border-stone-200">
