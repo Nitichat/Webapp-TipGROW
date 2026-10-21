@@ -50,7 +50,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenKnowledge, onGoHome, onOpe
             className="text-stone-600 font-medium hover:text-emerald-800 transition-colors cursor-pointer"
             title="คลิกเพื่อกลับหน้าแรก"
           >
-            © 2026 TipGROW. NoCodeNoLife Group
+            © 2026 TipGROW. NoCodeNoLife Group Nitedkaset 18
           </span>
         </div>
       </div>
