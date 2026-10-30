@@ -14,6 +14,8 @@ import { db, handleFirestoreError, OperationType } from '../firebase.ts';
 import { collection, addDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 
+import { AddCustomCropModal } from './AddCustomCropModal.tsx';
+
 interface CalculatorProps {
   currentUser: User | null;
   initialCropId?: string;
@@ -27,9 +29,30 @@ export const Calculator: React.FC<CalculatorProps> = ({
   onOpenAuth,
   onOpenKnowledge,
 }) => {
+  // Custom Crops saved in localStorage
+  const [customCrops, setCustomCrops] = useState<CropInfo[]>(() => {
+    try {
+      const saved = localStorage.getItem('tipgrow_custom_crops');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [isAddCropModalOpen, setIsAddCropModalOpen] = useState(false);
+  const [editingCrop, setEditingCrop] = useState<CropInfo | null>(null);
+
+  // Combined crops list (Standard + Custom)
+  const availableCrops = useMemo(() => {
+    return [...CROPS, ...customCrops];
+  }, [customCrops]);
+
   // 1. Crop & Growth Stage
   const [selectedCropId, setSelectedCropId] = useState<string>(initialCropId || 'durian');
-  const selectedCrop = useMemo(() => CROPS.find(c => c.id === selectedCropId) || CROPS[0], [selectedCropId]);
+  const selectedCrop = useMemo(() => {
+    return availableCrops.find(c => c.id === selectedCropId) || availableCrops[0] || CROPS[0];
+  }, [availableCrops, selectedCropId]);
+
   const [selectedStageId, setSelectedStageId] = useState<string>('stage2');
 
   useEffect(() => {
@@ -63,7 +86,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
   // Sync spacing defaults when crop changes
   const handleSelectCrop = (cropId: string) => {
     setSelectedCropId(cropId);
-    const newCrop = CROPS.find(c => c.id === cropId);
+    const newCrop = availableCrops.find(c => c.id === cropId);
     if (!newCrop) return;
 
     if (newCrop.stages.length > 0) {
@@ -73,7 +96,7 @@ export const Calculator: React.FC<CalculatorProps> = ({
 
     let defaultRow = 8;
     let defaultTree = 8;
-    let defaultTrees = newCrop.defaultTreesPerRai;
+    let defaultTrees = newCrop.defaultTreesPerRai || 25;
 
     if (cropId === 'durian') {
       defaultRow = 8; defaultTree = 8; defaultTrees = 25;
@@ -96,6 +119,49 @@ export const Calculator: React.FC<CalculatorProps> = ({
     setRowSpacing(defaultRow);
     setTreeSpacing(defaultTree);
     setTreesPerRai(defaultTrees);
+  };
+
+  // Custom Crop Handlers
+  const handleSaveCustomCrop = (newCrop: CropInfo) => {
+    setCustomCrops(prev => {
+      const exists = prev.some(c => c.id === newCrop.id);
+      let updated: CropInfo[];
+      if (exists) {
+        updated = prev.map(c => c.id === newCrop.id ? newCrop : c);
+      } else {
+        updated = [...prev, newCrop];
+      }
+      try {
+        localStorage.setItem('tipgrow_custom_crops', JSON.stringify(updated));
+      } catch (err) {
+        console.error('Failed to save custom crops to localStorage', err);
+      }
+      return updated;
+    });
+
+    setSelectedCropId(newCrop.id);
+    if (newCrop.stages.length > 0) {
+      setSelectedStageId(newCrop.stages[0].id);
+    }
+    setPlotName(`แปลง${newCrop.nameTh}พัฒนา`);
+    setTreesPerRai(newCrop.defaultTreesPerRai || 25);
+  };
+
+  const handleDeleteCustomCrop = (cropId: string) => {
+    if (window.confirm('คุณต้องการลบพืชกำหนดเองนี้ออกจากเครื่องใช่หรือไม่?')) {
+      setCustomCrops(prev => {
+        const updated = prev.filter(c => c.id !== cropId);
+        try {
+          localStorage.setItem('tipgrow_custom_crops', JSON.stringify(updated));
+        } catch (err) {
+          console.error(err);
+        }
+        return updated;
+      });
+      if (selectedCropId === cropId) {
+        handleSelectCrop('durian');
+      }
+    }
   };
 
   // Prevent invalid characters in number inputs
@@ -121,7 +187,8 @@ export const Calculator: React.FC<CalculatorProps> = ({
         k_ppm: soilK,
       },
       treesPerRai || 1,
-      { rowMeters: rowSpacing || 1, treeMeters: treeSpacing || 1 }
+      { rowMeters: rowSpacing || 1, treeMeters: treeSpacing || 1 },
+      availableCrops
     );
   }, [
     selectedCropId,
@@ -136,7 +203,8 @@ export const Calculator: React.FC<CalculatorProps> = ({
     soilK,
     treesPerRai,
     rowSpacing,
-    treeSpacing
+    treeSpacing,
+    availableCrops
   ]);
 
   // Save to Firebase Firestore
@@ -292,10 +360,11 @@ export const Calculator: React.FC<CalculatorProps> = ({
             </span>
           </div>
 
-          {/* 8 Crop Grid */}
+          {/* Available Crops Grid (Standard + Custom) */}
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5 mb-5">
-            {CROPS.map((crop) => {
+            {availableCrops.map((crop) => {
               const isSelected = crop.id === selectedCropId;
+              const isCustom = crop.category === 'พืชกำหนดเอง' || crop.id.startsWith('custom_');
               const cropAvatarSrc = crop.avatarUrl
                 ? normalizeImageUrl(crop.avatarUrl)
                 : (CROP_IMAGES[crop.id] || CROP_IMAGES.durian);
@@ -317,29 +386,89 @@ export const Calculator: React.FC<CalculatorProps> = ({
                     </span>
                   )}
 
-                  <div className="w-12 h-12 rounded-2xl overflow-hidden mb-1.5 border border-stone-200 bg-white shadow-2xs shrink-0 p-0.5">
-                    <img
-                      src={cropAvatarSrc}
-                      alt={crop.nameTh}
-                      className="w-full h-full object-cover rounded-xl"
-                      onError={(e) => {
-                        const target = e.currentTarget;
-                        const fallback = CROP_IMAGES[crop.id] || CROP_IMAGES.durian;
-                        if (target.src !== fallback) {
-                          target.src = fallback;
-                        }
-                      }}
-                      referrerPolicy="no-referrer"
-                    />
+                  {isCustom && (
+                    <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded-md bg-emerald-700 text-white text-[9px] font-bold tracking-tight">
+                      ของฉัน
+                    </span>
+                  )}
+
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden mb-1.5 border border-stone-200 bg-white shadow-2xs shrink-0 p-0.5 flex items-center justify-center">
+                    {crop.avatarUrl ? (
+                      <img
+                        src={cropAvatarSrc}
+                        alt={crop.nameTh}
+                        className="w-full h-full object-cover rounded-xl"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          const fallback = CROP_IMAGES[crop.id] || CROP_IMAGES.durian;
+                          if (target.src !== fallback) {
+                            target.src = fallback;
+                          }
+                        }}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <span className="text-2xl select-none">{crop.emoji || '🌱'}</span>
+                    )}
                   </div>
-                  <span className="text-xs sm:text-sm font-bold block">{crop.nameTh}</span>
+                  <span className="text-xs sm:text-sm font-bold block truncate max-w-full">{crop.nameTh}</span>
                   <span className="text-[10px] text-stone-500 truncate max-w-full">
-                    {crop.category}
+                    {crop.variety || crop.category || 'พืชทั่วไป'}
                   </span>
                 </button>
               );
             })}
+
+            {/* Button to add new custom crop */}
+            <button
+              type="button"
+              onClick={() => {
+                setEditingCrop(null);
+                setIsAddCropModalOpen(true);
+              }}
+              className="relative flex flex-col items-center justify-center p-3 rounded-2xl transition-all cursor-pointer text-center bg-emerald-50/50 hover:bg-emerald-100/70 text-emerald-900 border-2 border-dashed border-emerald-300 min-h-[110px]"
+              title="เพิ่มชนิดพืชและสูตรธาตุอาหารของตนเอง"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-emerald-200/60 flex items-center justify-center text-emerald-800 mb-1.5">
+                <span className="material-symbols-outlined text-xl">add</span>
+              </div>
+              <span className="text-xs font-bold block whitespace-nowrap">+ เพิ่มพืชของฉัน</span>
+              <span className="text-[10px] text-emerald-700 whitespace-nowrap">บันทึกในเครื่อง</span>
+            </button>
           </div>
+
+          {/* Custom Crop Controls (Edit/Delete) */}
+          {(selectedCrop.category === 'พืชกำหนดเอง' || selectedCrop.id.startsWith('custom_')) && (
+            <div className="mb-5 p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2.5 text-emerald-950 font-medium">
+                <span className="material-symbols-outlined text-emerald-700 text-lg shrink-0">bookmark_check</span>
+                <div>
+                  <strong>พืชกำหนดเอง:</strong> {selectedCrop.nameTh} ({selectedCrop.spacingDesc}) — ข้อมูลบันทึกไว้ในเครื่องของคุณ
+                </div>
+              </div>
+              <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingCrop(selectedCrop);
+                    setIsAddCropModalOpen(true);
+                  }}
+                  className="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 font-bold rounded-xl border border-emerald-200 flex items-center gap-1 shadow-2xs transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[15px]">edit</span>
+                  แก้ไขข้อมูลพืช
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteCustomCrop(selectedCrop.id)}
+                  className="px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-600 font-bold rounded-xl border border-rose-200 flex items-center gap-1 shadow-2xs transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[15px]">delete</span>
+                  ลบพืชนี้
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Growth Stage Selector */}
           <div>
@@ -765,6 +894,17 @@ export const Calculator: React.FC<CalculatorProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Modal for adding/editing custom crop */}
+      <AddCustomCropModal
+        isOpen={isAddCropModalOpen}
+        onClose={() => {
+          setIsAddCropModalOpen(false);
+          setEditingCrop(null);
+        }}
+        onSaveCrop={handleSaveCustomCrop}
+        initialCrop={editingCrop}
+      />
     </div>
   );
 };

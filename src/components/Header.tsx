@@ -2,14 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { User } from 'firebase/auth';
 
+export type NavigationTab = 'home' | 'calculator' | 'history' | 'knowledge' | 'team' | 'admin';
+
 interface HeaderProps {
-  currentTab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team';
-  onSelectTab: (tab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team') => void;
+  currentTab: NavigationTab;
+  onSelectTab: (tab: NavigationTab) => void;
   currentUser: User | null;
   onOpenAuth: () => void;
   onLogout: () => void;
   onQuickReport?: () => void;
   onSearchCrop?: (query: string) => void;
+  onOpenAdmin?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -18,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentUser,
   onOpenAuth,
   onLogout,
+  onOpenAdmin,
 }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -87,7 +91,9 @@ export const Header: React.FC<HeaderProps> = ({
     { label: 'กรมวิชาการเกษตร', url: 'https://www.doa.go.th/th/', icon: 'science' },
   ];
 
-  const handleSelectTab = (tab: 'home' | 'calculator' | 'history' | 'knowledge' | 'team') => {
+  const isAdminUser = currentUser?.email?.toLowerCase() === 'nitichat38937@gmail.com';
+
+  const handleSelectTab = (tab: NavigationTab) => {
     onSelectTab(tab);
     setIsMobileMenuOpen(false);
     setShowProfileMenu(false);
@@ -178,7 +184,25 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Section: Profile / Auth Button & Mobile Hamburger Button */}
           <div className="flex items-center gap-2 sm:gap-3 justify-end shrink-0">
-            
+            {/* Admin Badge/Button for Nitichat38937@gmail.com */}
+            {isAdminUser && (
+              <button
+                onClick={() => {
+                  if (onOpenAdmin) onOpenAdmin();
+                  else handleSelectTab('admin');
+                }}
+                className={`hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  currentTab === 'admin'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300'
+                }`}
+                title="เข้าสู่แดชบอร์ดผู้ดูแลระบบ"
+              >
+                <span className="material-symbols-outlined text-[16px] text-emerald-600">admin_panel_settings</span>
+                <span>โหมด Admin</span>
+              </button>
+            )}
+
             {/* Desktop/Tablet Profile / Auth Button */}
             <div className="hidden sm:flex items-center">
               {currentUser ? (
@@ -213,6 +237,21 @@ export const Header: React.FC<HeaderProps> = ({
                           {currentUser.email}
                         </p>
                       </div>
+
+                      {isAdminUser && (
+                        <button
+                          onClick={() => {
+                            if (onOpenAdmin) onOpenAdmin();
+                            else handleSelectTab('admin');
+                            setShowProfileMenu(false);
+                          }}
+                          className="w-full text-left px-3 py-2 text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg flex items-center gap-2 transition-colors mb-1 cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-[18px] text-emerald-700">admin_panel_settings</span>
+                          โหมด Admin หลังบ้าน
+                        </button>
+                      )}
+
                       <button
                         onClick={() => {
                           handleSelectTab('history');
@@ -424,6 +463,19 @@ export const Header: React.FC<HeaderProps> = ({
                         </p>
                       </div>
                     </div>
+
+                    {isAdminUser && (
+                      <button
+                        onClick={() => {
+                          if (onOpenAdmin) onOpenAdmin();
+                          else handleSelectTab('admin');
+                        }}
+                        className="w-full mb-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-900 bg-slate-200/80 hover:bg-slate-300 flex items-center gap-2 transition-colors cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-[18px] text-emerald-800">admin_panel_settings</span>
+                        <span>โหมด Admin หลังบ้าน</span>
+                      </button>
+                    )}
 
                     <button
                       onClick={() => handleSelectTab('history')}

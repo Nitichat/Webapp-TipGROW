@@ -15,12 +15,15 @@ import { HomeOverview } from './components/HomeOverview.tsx';
 import { LoginPage } from './components/LoginPage.tsx';
 import { ReportModal } from './components/ReportModal.tsx';
 import { TeamPage } from './components/TeamPage.tsx';
+import { AdminDashboard } from './components/AdminDashboard.tsx';
+import { AdminAuthModal } from './components/AdminAuthModal.tsx';
 import { CalculationResult } from './data/agronomy.ts';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [currentTab, setCurrentTab] = useState<'home' | 'calculator' | 'history' | 'knowledge' | 'team'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'calculator' | 'history' | 'knowledge' | 'team' | 'admin'>('home');
+  const [isAdminAuthModalOpen, setIsAdminAuthModalOpen] = useState(false);
   const [reportResult, setReportResult] = useState<CalculationResult | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
@@ -62,6 +65,15 @@ export default function App() {
     }
   };
 
+  const handleOpenAdmin = () => {
+    const isAuth = sessionStorage.getItem('tipgrow_admin_authenticated') === 'true';
+    if (isAuth) {
+      setCurrentTab('admin');
+    } else {
+      setIsAdminAuthModalOpen(true);
+    }
+  };
+
   // Auth Loading State
   if (authLoading) {
     return (
@@ -96,6 +108,7 @@ export default function App() {
         onLogout={handleLogout}
         onQuickReport={handleQuickReport}
         onSearchCrop={handleSearchCrop}
+        onOpenAdmin={handleOpenAdmin}
       />
 
       {/* Main Content Area */}
@@ -144,6 +157,13 @@ export default function App() {
             onStartCalculation={() => setCurrentTab('calculator')}
           />
         )}
+
+        {currentTab === 'admin' && (
+          <AdminDashboard
+            currentUser={currentUser}
+            onExitAdmin={() => setCurrentTab('home')}
+          />
+        )}
       </main>
 
       {/* Footer */}
@@ -159,6 +179,16 @@ export default function App() {
         onClose={() => setIsReportModalOpen(false)}
         result={reportResult}
         farmerName={currentUser?.displayName || currentUser?.email || 'คุณนิติฉัตร (เกษตรกร)'}
+      />
+
+      {/* Admin Passcode Authentication Modal */}
+      <AdminAuthModal
+        isOpen={isAdminAuthModalOpen}
+        onClose={() => setIsAdminAuthModalOpen(false)}
+        currentUser={currentUser}
+        onSuccess={() => {
+          setCurrentTab('admin');
+        }}
       />
     </div>
   );

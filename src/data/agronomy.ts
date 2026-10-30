@@ -701,9 +701,11 @@ export function calculateFertilizer(
   wah: number,
   soil: SoilAssessment,
   customTreesPerRai?: number,
-  spacing?: { rowMeters: number; treeMeters: number }
+  spacing?: { rowMeters: number; treeMeters: number },
+  cropsList?: CropInfo[]
 ): CalculationResult {
-  const crop = CROPS.find(c => c.id === cropId) || CROPS[0];
+  const allCrops = cropsList && cropsList.length > 0 ? cropsList : CROPS;
+  const crop = allCrops.find(c => c.id === cropId) || CROPS.find(c => c.id === cropId) || CROPS[0];
   const stage = crop.stages.find(s => s.id === stageId) || crop.stages[0];
 
   const totalRai = Math.max(0.01, rai + (ngan / 4) + (wah / 400));
